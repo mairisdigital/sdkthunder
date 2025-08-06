@@ -9,7 +9,8 @@ import {
   Mail,
   Trophy,
   BarChart3,
-  Eye
+  Eye,
+  Menu
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -22,6 +23,14 @@ export default function AdminDashboard() {
       icon: Settings,
       color: 'from-blue-500 to-blue-600',
       stats: 'E-pasts, atrašanās vieta'
+    },
+    {
+      name: 'Navbar',
+      description: 'Pārvaldīt navigācijas joslas logo un izvēlni',
+      href: '/admin/navbar',
+      icon: Menu,
+      color: 'from-indigo-500 to-indigo-600',
+      stats: 'Logo, 7 izvēlnes punkti'
     },
     {
       name: 'Jaunumi',
@@ -60,7 +69,7 @@ export default function AdminDashboard() {
       description: 'Rediģēt informāciju par komandu un vēsturi',
       href: '/admin/about',
       icon: Users,
-      color: 'from-indigo-500 to-indigo-600',
+      color: 'from-cyan-500 to-cyan-600',
       stats: 'Vēsture, vērtības'
     },
     {

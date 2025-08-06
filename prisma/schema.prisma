@@ -30,6 +30,31 @@ model TopBarSettings {
   @@map("topbar_settings")
 }
 
+// Navbar settings
+model NavbarSettings {
+  id          Int      @id @default(autoincrement())
+  logoText    String   @default("SDK")
+  logoSubtext String   @default("THUNDER")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("navbar_settings")
+}
+
+// Navbar menu items
+model NavbarMenuItem {
+  id        Int     @id @default(autoincrement())
+  name      String
+  href      String
+  order     Int     @default(0)
+  active    Boolean @default(false)
+  visible   Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("navbar_menu_items")
+}
+
 // News articles
 model News {
   id          Int      @id @default(autoincrement())
