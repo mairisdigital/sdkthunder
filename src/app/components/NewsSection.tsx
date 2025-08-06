@@ -1,59 +1,60 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Calendar, User, ArrowRight, Eye, MessageCircle, Tag } from 'lucide-react';
+import Link from 'next/link'; // Pievienojiet šo importu
+
+// NewsArticle interfeiss
+interface NewsArticle {
+  id: number;
+  title: string;
+  slug: string;
+  summary: string;
+  content: string;
+  image: string | null;
+  category: string;
+  tags: string[];
+  author: string;
+  published: boolean;
+  featured: boolean;
+  trending: boolean;
+  readTime: number;
+  views: number;
+  comments: number;
+  likes: number;
+  publishedAt: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 const NewsSection: React.FC = () => {
-  const news = [
-    {
-      id: 1,
-      title: 'SDKThunder uzvar draudzības spēlē pret Ventspils komandu',
-      summary: 'Vakar vakara spēlē mūsu komanda demonstrēja lielisku sniegumu, uzvarot ar rezultātu 89:76. Izcili spēlēja visi komandas dalībnieki.',
-      image: '/news-1.jpg',
-      date: '2025-01-15',
-      author: 'Jānis Bērziņš',
-      category: 'Spēles',
-      views: 342,
-      comments: 12,
-      featured: true
-    },
-    {
-      id: 2,
-      title: 'Jauns treneris pievienojas mūsu komandai',
-      summary: 'Ar prieku paziņojam, ka mums pievienojas pieredzējušais treneris Andris Kalniņš, kurš strādās ar jaunajiem spēlētājiem.',
-      image: '/news-2.jpg',
-      date: '2025-01-12',
-      author: 'Linda Ozola',
-      category: 'Komanda',
-      views: 189,
-      comments: 8,
-      featured: false
-    },
-    {
-      id: 3,
-      title: 'EuroBasket 2025 biļešu pārdošana sākas martā',
-      summary: 'Oficiāli apstiprināts, ka biļešu pārdošana uz EuroBasket 2025 spēlēm Rīgā sāksies marta sākumā. Mūsu atbalstītāji varēs iegūt īpašus piedāvājumus.',
-      image: '/news-3.jpg',
-      date: '2025-01-10',
-      author: 'Māris Liepa',
-      category: 'Pasākumi',
-      views: 567,
-      comments: 23,
-      featured: false
-    },
-    {
-      id: 4,
-      title: 'Trenažieru zāles renovācija pabeigta',
-      summary: 'Mūsu trenažieru zāle ir pilnībā atjaunota ar jaunākajiem sporta trenažieriem un modernu aprīkojumu.',
-      image: '/news-4.jpg',
-      date: '2025-01-08',
-      author: 'Kristīne Dāle',
-      category: 'Infrastruktūra',
-      views: 134,
-      comments: 5,
-      featured: false
+  const [news, setNews] = useState<NewsArticle[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchNews() {
+      try {
+        setLoading(true);
+        const res = await fetch('/api/news');
+        
+        if (!res.ok) {
+          throw new Error('Failed to fetch news');
+        }
+        
+        const data: NewsArticle[] = await res.json();
+        setNews(data);
+        setError(null);
+      } catch (err) {
+        console.error('Error loading news:', err);
+        setError('Neizdevās ielādēt jaunumus');
+      } finally {
+        setLoading(false);
+      }
     }
-  ];
+    
+    fetchNews();
+  }, []);
 
   const getCategoryColor = (category: string) => {
     switch (category) {
@@ -73,6 +74,59 @@ const NewsSection: React.FC = () => {
       day: 'numeric' 
     });
   };
+
+  // Loading un Error stāvokļi paliek nemainīgi...
+  if (loading) {
+    return (
+      <section className="py-20 bg-gradient-to-br from-white via-gray-50 to-slate-100">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-600 text-lg">Ielādē jaunākos rakstus...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="py-20 bg-gradient-to-br from-white via-gray-50 to-slate-100">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center h-20">
+            <div className="animate-pulse flex items-center">
+              <div className="w-16 h-16 bg-gray-300 rounded-lg mr-3"></div>
+            </div>
+            <div className="hidden lg:flex space-x-1">
+              {[1,2,3,4,5,6,7].map((i) => (
+                <div key={i} className="h-8 bg-gray-300 rounded w-20 animate-pulse"></div>
+              ))}
+            </div>
+            <div className="lg:hidden">
+              <div className="w-8 h-8 bg-gray-300 rounded animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (news.length === 0) {
+    return (
+      <section className="py-20 bg-gradient-to-br from-white via-gray-50 to-slate-100">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <div className="text-gray-400 text-6xl mb-4">📰</div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Nav pieejami jaunumi</h2>
+            <p className="text-gray-600">Jaunumi drīzumā būs pieejami.</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const featuredNews = news.filter(article => article.featured);
+  const otherNews = news.filter(article => !article.featured);
 
   return (
     <section className="py-20 bg-gradient-to-br from-white via-gray-50 to-slate-100 relative overflow-hidden">
@@ -100,20 +154,23 @@ const NewsSection: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-          {news.filter(article => article.featured).map((article) => (
-            <div key={article.id} className="lg:col-span-2 group cursor-pointer">
+          {featuredNews.length > 0 && featuredNews.slice(0, 1).map((article) => (
+            <Link 
+              key={article.id} 
+              href={`/news/${article.slug || article.id}`}
+              className="lg:col-span-2 group cursor-pointer block"
+            >
               <div className="bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-red-200 hover:scale-[1.02]">
-                <div className="absolute top-6 left-6 z-10 bg-gradient-to-r from-red-600 to-red-700 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
-                  🔥 Aktuāls
-                </div>
-
-                <div className="relative h-64 lg:h-80 bg-gradient-to-br from-red-100 to-orange-100 overflow-hidden">
-                  <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
-                    <div className="text-gray-500 text-center">
-                      <div className="text-6xl mb-2">📰</div>
-                      <div className="text-sm">Jaunuma attēls</div>
-                    </div>
-                  </div>
+                <div className="relative h-64 lg:h-80 overflow-hidden">
+                  <img
+                    src={article.image || '/placeholder.jpg'}
+                    alt={article.title}
+                    className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/placeholder.jpg';
+                    }}
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                 </div>
 
@@ -125,7 +182,7 @@ const NewsSection: React.FC = () => {
                     </span>
                     <div className="flex items-center text-gray-500 text-sm">
                       <Calendar className="w-4 h-4 mr-1" />
-                      {formatDate(article.date)}
+                      {formatDate(article.publishedAt || article.createdAt)}
                     </div>
                   </div>
 
@@ -155,58 +212,76 @@ const NewsSection: React.FC = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
 
-          <div className="space-y-6">
-            {news.filter(article => !article.featured).map((article) => (
-              <div key={article.id} className="group cursor-pointer">
-                <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-red-200 hover:scale-[1.02]">
-                  <div className="flex">
-                    <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 flex-shrink-0 flex items-center justify-center">
-                      <div className="text-gray-400 text-2xl">📰</div>
-                    </div>
-
-                    <div className="flex-1 p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getCategoryColor(article.category)}`}>
-                          {article.category}
-                        </span>
-                        <span className="text-xs text-gray-500">{formatDate(article.date)}</span>
+          {otherNews.length > 0 && (
+            <div className="space-y-6">
+              {otherNews.slice(0, 3).map((article) => (
+                <Link 
+                  key={article.id} 
+                  href={`/news/${article.slug || article.id}`}
+                  className="group cursor-pointer block"
+                >
+                  <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-red-200 hover:scale-[1.02]">
+                    <div className="flex">
+                      <div className="w-24 h-24 flex-shrink-0 overflow-hidden rounded-l-2xl">
+                        <img
+                          src={article.image || '/placeholder-small.jpg'}
+                          alt={article.title}
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = '/placeholder-small.jpg';
+                          }}
+                        />
                       </div>
 
-                      <h4 className="text-sm font-bold text-slate-800 group-hover:text-red-600 transition-colors duration-300 line-clamp-2 mb-2">
-                        {article.title}
-                      </h4>
+                      <div className="flex-1 p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className={`px-2 py-1 rounded-full text-xs font-semibold border ${getCategoryColor(article.category)}`}>
+                            {article.category}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            {formatDate(article.publishedAt || article.createdAt)}
+                          </span>
+                        </div>
 
-                      <div className="flex items-center justify-between text-xs text-gray-500">
-                        <span>{article.author}</span>
-                        <div className="flex items-center gap-2">
-                          <span className="flex items-center">
-                            <Eye className="w-3 h-3 mr-1" />
-                            {article.views}
-                          </span>
-                          <span className="flex items-center">
-                            <MessageCircle className="w-3 h-3 mr-1" />
-                            {article.comments}
-                          </span>
+                        <h4 className="text-sm font-bold text-slate-800 group-hover:text-red-600 transition-colors duration-300 line-clamp-2 mb-2">
+                          {article.title}
+                        </h4>
+
+                        <div className="flex items-center justify-between text-xs text-gray-500">
+                          <span>{article.author}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="flex items-center">
+                              <Eye className="w-3 h-3 mr-1" />
+                              {article.views}
+                            </span>
+                            <span className="flex items-center">
+                              <MessageCircle className="w-3 h-3 mr-1" />
+                              {article.comments}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="text-center">
-          <button className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 shadow-lg group">
-            <span className="flex items-center justify-center">
-              Skatīt visus jaunumus
-              <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
-            </span>
-          </button>
+          <Link href="/news">
+            <button className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 shadow-lg group">
+              <span className="flex items-center justify-center">
+                Skatīt visus jaunumus
+                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+              </span>
+            </button>
+          </Link>
         </div>
       </div>
     </section>
