@@ -106,6 +106,7 @@ const PartnersPage: React.FC = () => {
     setIsAddingNew(false);
   };
 
+  // 🔧 IZLABOTS: handleSavePartner funkcija
   const handleSavePartner = async () => {
     if (!editingPartner || !editingPartner.name.trim()) return;
     
@@ -134,11 +135,16 @@ const PartnersPage: React.FC = () => {
           ));
         }
         
+        // 🔧 IZLABOTS: Pareizi resetējam visus state
         setSaveStatus('saved');
+        
+        // ✅ Aizveram modāli UZREIZ pēc saglabāšanas
         setEditingPartner(null);
         setIsAddingNew(false);
         
+        // Parādām success ziņojumu īslaicīgi
         setTimeout(() => setSaveStatus('idle'), 2000);
+        
       } else {
         throw new Error('Kļūda saglabājot partneri');
       }
@@ -202,6 +208,8 @@ const PartnersPage: React.FC = () => {
       }
 
       const result = await response.json();
+      console.log('✅ Logo upload successful:', result.url); // Debug log
+      
       setEditingPartner({
         ...editingPartner,
         logo: result.url
@@ -277,122 +285,107 @@ const PartnersPage: React.FC = () => {
         </div>
       )}
 
-      {/* Statistika */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {partnerTiers.map((tier) => {
-          const count = partners.filter(p => p.tier === tier.value && p.active).length;
+      {/* Partneru saraksts */}
+      <div className="grid gap-6">
+        {partnerTiers.map(tier => {
+          const tieredPartners = partners.filter(p => p.tier === tier.value);
+          if (tieredPartners.length === 0) return null;
+
           return (
-            <div key={tier.value} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">{tier.label}</p>
-                  <p className="text-2xl font-bold text-gray-900">{count}</p>
+            <div key={tier.value} className="bg-white rounded-xl shadow-md overflow-hidden">
+              <div className={`px-6 py-4 bg-gradient-to-r ${tier.color} text-white`}>
+                <div className="flex items-center">
+                  <tier.icon className="w-6 h-6 mr-3" />
+                  <h2 className="text-xl font-bold">{tier.label} Partneri ({tieredPartners.length})</h2>
                 </div>
-                <div className={`p-2 rounded-lg bg-gradient-to-r ${tier.color}`}>
-                  <tier.icon className="w-5 h-5 text-white" />
-                </div>
+              </div>
+              
+              <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {tieredPartners.map(partner => (
+                  <div key={partner.id} className="bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    {/* Kontroles */}
+                    <div className="flex justify-between items-center mb-3">
+                      <div className="flex items-center gap-2">
+                        {getTierIcon(partner.tier)}
+                        <span className={`px-2 py-1 text-xs rounded-full ${
+                          partner.active 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-gray-100 text-gray-600'
+                        }`}>
+                          {partner.active ? 'Aktīvs' : 'Neaktīvs'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => handleToggleActive(partner)}
+                          className={`px-3 py-1 text-xs rounded-full font-medium transition-colors ${
+                            partner.active 
+                              ? 'bg-green-100 text-green-800' 
+                              : 'bg-gray-100 text-gray-600'
+                          }`}
+                        >
+                          {partner.active ? 'Aktīvs' : 'Neaktīvs'}
+                        </button>
+                        <button
+                          onClick={() => handleEditPartner(partner)}
+                          className="p-1 text-gray-500 hover:text-blue-600 transition-colors"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeletePartner(partner.id)}
+                          className="p-1 text-gray-500 hover:text-red-600 transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Logo */}
+                    <div className="h-20 bg-white rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center mb-3">
+                      {partner.logo ? (
+                        <img 
+                          src={partner.logo} 
+                          alt={partner.name} 
+                          className="max-h-16 max-w-full object-contain" 
+                          onError={(e) => {
+                            console.error('❌ Failed to load partner logo:', partner.logo);
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+                      ) : (
+                        <div className="text-gray-400 text-sm text-center">
+                          <div>{partner.name}</div>
+                          <div className="text-xs">LOGO</div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Info */}
+                    <div>
+                      <h3 className="font-bold text-gray-900 mb-1 flex items-center gap-2">
+                        {partner.name}
+                        {partner.website && (
+                          <a
+                            href={partner.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-500 hover:text-blue-600"
+                          >
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
+                        )}
+                      </h3>
+                      {partner.description && (
+                        <p className="text-sm text-gray-600">{partner.description}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           );
         })}
-      </div>
-
-      {/* Partneru saraksts */}
-      <div className="bg-white rounded-xl shadow-lg border border-gray-200">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900">
-            Visi partneri ({partners.length})
-          </h2>
-        </div>
-        
-        <div className="p-6">
-          {partners.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              <Trophy className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p>Nav pievienoti partneri</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {partners.map((partner) => (
-                <div 
-                  key={partner.id} 
-                  className={`bg-gray-50 rounded-lg border p-4 transition-all ${
-                    partner.active ? 'border-gray-200' : 'border-gray-300 opacity-60'
-                  }`}
-                >
-                  {/* Header */}
-                  <div className="flex items-center justify-between mb-3">
-                    <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-bold text-white bg-gradient-to-r ${getTierColor(partner.tier)}`}>
-                      {getTierIcon(partner.tier)}
-                      <span className="ml-1">{partner.tier}</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleToggleActive(partner)}
-                        className={`px-2 py-1 rounded text-xs font-medium ${
-                          partner.active 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-gray-100 text-gray-600'
-                        }`}
-                      >
-                        {partner.active ? 'Aktīvs' : 'Neaktīvs'}
-                      </button>
-                      <button
-                        onClick={() => handleEditPartner(partner)}
-                        className="p-1 text-gray-500 hover:text-blue-600 transition-colors"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDeletePartner(partner.id)}
-                        className="p-1 text-gray-500 hover:text-red-600 transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Logo */}
-                  <div className="h-20 bg-white rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center mb-3">
-                    {partner.logo ? (
-                      <img 
-                        src={partner.logo} 
-                        alt={partner.name} 
-                        className="max-h-16 max-w-full object-contain" 
-                      />
-                    ) : (
-                      <div className="text-gray-400 text-sm text-center">
-                        <div>{partner.name}</div>
-                        <div className="text-xs">LOGO</div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Info */}
-                  <div>
-                    <h3 className="font-bold text-gray-900 mb-1 flex items-center gap-2">
-                      {partner.name}
-                      {partner.website && (
-                        <a
-                          href={partner.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-500 hover:text-blue-600"
-                        >
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
-                      )}
-                    </h3>
-                    {partner.description && (
-                      <p className="text-sm text-gray-600">{partner.description}</p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
       </div>
 
       {/* Edit/Add Modal */}
@@ -426,11 +419,6 @@ const PartnersPage: React.FC = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
                   placeholder="Ievadiet partnera nosaukumu"
                 />
-              </div>
-
-              {/* Tips */}
-              <div style={{ display: 'none' }}>
-                {/* Type removed - hidden for backward compatibility */}
               </div>
 
               {/* Līmenis */}
@@ -489,6 +477,10 @@ const PartnersPage: React.FC = () => {
                         src={editingPartner.logo} 
                         alt="Logo preview" 
                         className="max-h-16 max-w-full object-contain"
+                        onError={(e) => {
+                          console.error('❌ Failed to load logo preview:', editingPartner.logo);
+                          e.currentTarget.style.display = 'none';
+                        }}
                       />
                     </div>
                   )}

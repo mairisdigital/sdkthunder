@@ -27,14 +27,14 @@ const AdminNavbar: React.FC = () => {
     { name: 'TopBar', href: '/admin/topbar', icon: Settings },
     { name: 'Navbar', href: '/admin/navbar', icon: Menu },
     { name: 'Hero', href: '/admin/hero', icon: Layout },
-    { name: 'Pasākumi', href: '/admin/events', icon: Zap }, // Jauns punkts
+    { name: 'Pasākumi', href: '/admin/events', icon: Zap },
+    { name: 'Partneri', href: '/admin/partners', icon: Trophy },
     { name: 'Jaunumi', href: '/admin/news', icon: Newspaper },
     { name: 'Kalendārs', href: '/admin/calendar', icon: Calendar },
     { name: 'Galerija', href: '/admin/gallery', icon: Image },
     { name: 'Vietas', href: '/admin/locations', icon: MapPin },
     { name: 'Par mums', href: '/admin/about', icon: Users },
     { name: 'Kontakti', href: '/admin/contacts', icon: Mail },
-    { name: 'Partneri', href: '/admin/partners', icon: Trophy },
   ];
 
   return (

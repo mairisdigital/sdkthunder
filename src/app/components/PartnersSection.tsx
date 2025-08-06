@@ -29,9 +29,10 @@ const PartnersSection: React.FC = () => {
           throw new Error('Kļūda ielādējot partnerus');
         }
         const data = await response.json();
+        console.log('✅ Loaded partners:', data); // Debug log
         setPartners(data);
       } catch (err) {
-        console.error('Kļūda:', err);
+        console.error('❌ Error loading partners:', err);
         setError('Neizdevās ielādēt partnerus');
       } finally {
         setLoading(false);
@@ -59,8 +60,27 @@ const PartnersSection: React.FC = () => {
     }
   };
 
-  const formatPartnerType = (type: string) => {
-    return type.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+  // 🔧 IZLABOTS: handleImageError funkcija
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>, partner: Partner) => {
+    console.error(`❌ Failed to load image for ${partner.name}:`, partner.logo);
+    e.currentTarget.style.display = 'none';
+    
+    // Parādīt fallback konteineeru
+    const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+    if (fallback && fallback.classList.contains('fallback-logo')) {
+      fallback.style.display = 'flex';
+    }
+  };
+
+  // 🔧 IZLABOTS: handleImageLoad funkcija  
+  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement, Event>, partner: Partner) => {
+    console.log(`✅ Successfully loaded image for ${partner.name}`);
+    
+    // Paslēpt fallback konteineeru
+    const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+    if (fallback && fallback.classList.contains('fallback-logo')) {
+      fallback.style.display = 'none';
+    }
   };
 
   if (loading) {
@@ -133,20 +153,30 @@ const PartnersSection: React.FC = () => {
                   {partner.tier.toUpperCase()}
                 </div>
                 
-                <div className="h-48 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-8 group-hover:from-red-50 group-hover:to-orange-50 transition-all duration-500">
-                  {partner.logo ? (
+                <div className="h-48 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-8 group-hover:from-red-50 group-hover:to-orange-50 transition-all duration-500 relative">
+                  {/* 🔧 IZLABOTS: Pareizs attēlu rādīšanas veids */}
+                  {partner.logo && (
                     <img 
                       src={partner.logo} 
                       alt={`${partner.name} logo`}
                       className="max-w-32 max-h-20 object-contain group-hover:scale-110 transition-transform duration-300"
+                      onError={(e) => handleImageError(e, partner)}
+                      onLoad={(e) => handleImageLoad(e, partner)}
+                      style={{ display: 'block' }}
                     />
-                  ) : (
-                    <div className="w-32 h-20 bg-gray-200 rounded-lg flex items-center justify-center shadow-inner group-hover:shadow-lg transition-shadow duration-300">
-                      <div className="text-gray-500 text-sm font-medium text-center">
-                        {partner.name}<br />LOGO
-                      </div>
-                    </div>
                   )}
+                  
+                  {/* Fallback logo container - vienmēr eksistē */}
+                  <div 
+                    className={`fallback-logo w-32 h-20 bg-gray-200 rounded-lg flex items-center justify-center shadow-inner group-hover:shadow-lg transition-shadow duration-300 absolute inset-0 m-auto ${
+                      partner.logo ? 'hidden' : 'flex'
+                    }`}
+                    style={{ display: partner.logo ? 'none' : 'flex' }}
+                  >
+                    <div className="text-gray-500 text-sm font-medium text-center">
+                      {partner.name}<br />LOGO
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -195,25 +225,12 @@ const PartnersSection: React.FC = () => {
             <h3 className="text-3xl md:text-4xl font-bold mb-4">
               Vēlies kļūt par mūsu partneri?
             </h3>
-            <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-              Pievienojies mūsu komandai un atbalsti basketbola attīstību Latvijā. 
-              Kopā mēs varam sasniegt vēl lielākus panākumus!
+            <p className="text-xl mb-8 opacity-90">
+              Sazinies ar mums un kopā veidosim nākotni!
             </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
-                href="/contacts"
-                className="bg-white text-red-600 hover:bg-gray-100 px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 shadow-lg inline-block"
-              >
-                Sazināties ar mums
-              </a>
-              <a
-                href="/about"
-                className="border-2 border-white text-white hover:bg-white hover:text-red-600 px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 inline-block"
-              >
-                Uzzināt vairāk
-              </a>
-            </div>
+            <button className="bg-white text-red-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+              Sazināties ar mums
+            </button>
           </div>
         </div>
       </div>

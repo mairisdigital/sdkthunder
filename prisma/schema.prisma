@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// TopBar settings
 model TopBarSettings {
   id           Int      @id @default(autoincrement())
   email        String
@@ -23,7 +22,6 @@ model TopBarSettings {
   @@map("topbar_settings")
 }
 
-// Navbar settings
 model NavbarSettings {
   id          Int      @id @default(autoincrement())
   logoText    String   @default("SDK")
@@ -34,7 +32,6 @@ model NavbarSettings {
   @@map("navbar_settings")
 }
 
-// Navbar menu items
 model NavbarMenuItem {
   id        Int     @id @default(autoincrement())
   name      String
@@ -48,7 +45,6 @@ model NavbarMenuItem {
   @@map("navbar_menu_items")
 }
 
-// HeroSection settings
 model HeroSettings {
   id                Int      @id @default(autoincrement())
   title             String   @default("SDKThunder")
@@ -71,7 +67,6 @@ model HeroSettings {
   @@map("hero_settings")
 }
 
-// Events section settings
 model EventsSettings {
   id                    Int      @id @default(autoincrement())
   title                 String   @default("Tuvākie sporta")
@@ -98,7 +93,6 @@ model EventsSettings {
   @@map("events_settings")
 }
 
-// Partners
 model Partner {
   id          Int         @id @default(autoincrement())
   name        String
@@ -119,134 +113,4 @@ enum PartnerTier {
   SILVER  
   BRONZE
   PARTNER  
-}
-
-// News articles
-model News {
-  id          Int      @id @default(autoincrement())
-  title       String
-  summary     String
-  content     String
-  image       String?
-  category    String
-  author      String
-  featured    Boolean  @default(false)
-  published   Boolean  @default(true)
-  views       Int      @default(0)
-  likes       Int      @default(0)
-  readTime    Int      @default(3)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  publishedAt DateTime @default(now())
-
-  comments NewsComment[]
-  tags     NewsTag[]
-
-  @@map("news")
-}
-
-// News comments
-model NewsComment {
-  id        Int      @id @default(autoincrement())
-  newsId    Int
-  author    String
-  content   String
-  likes     Int      @default(0)
-  createdAt DateTime @default(now())
-
-  news News @relation(fields: [newsId], references: [id], onDelete: Cascade)
-
-  @@map("news_comments")
-}
-
-// News tags
-model NewsTag {
-  id     Int    @id @default(autoincrement())
-  newsId Int
-  tag    String
-
-  news News @relation(fields: [newsId], references: [id], onDelete: Cascade)
-
-  @@map("news_tags")
-}
-
-// Calendar events
-model CalendarEvent {
-  id               Int      @id @default(autoincrement())
-  title            String
-  description      String?
-  date             DateTime
-  time             String
-  location         String
-  type             EventType
-  opponent         String?
-  status           EventStatus @default(UPCOMING)
-  result           String?
-  ticketsAvailable Boolean    @default(false)
-  createdAt        DateTime   @default(now())
-  updatedAt        DateTime   @updatedAt
-
-  @@map("calendar_events")
-}
-
-enum EventType {
-  GAME
-  TRAINING
-  EVENT
-}
-
-enum EventStatus {
-  UPCOMING
-  COMPLETED
-  LIVE
-}
-
-// Gallery items
-model GalleryItem {
-  id          Int         @id @default(autoincrement())
-  title       String
-  description String?
-  filename    String
-  type        MediaType
-  category    String
-  views       Int         @default(0)
-  likes       Int         @default(0)
-  downloads   Int         @default(0)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-
-  @@map("gallery_items")
-}
-
-enum MediaType {
-  PHOTO
-  VIDEO
-}
-
-// Contact form submissions
-model ContactSubmission {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String
-  subject   String?
-  message   String
-  read      Boolean  @default(false)
-  createdAt DateTime @default(now())
-
-  @@map("contact_submissions")
-}
-
-// About page content
-model AboutContent {
-  id          Int      @id @default(autoincrement())
-  section     String   @unique
-  title       String?
-  content     String
-  image       String?
-  order       Int      @default(0)
-  published   Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("about_content")
 }
