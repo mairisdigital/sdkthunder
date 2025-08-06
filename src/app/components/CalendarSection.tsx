@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -33,65 +33,51 @@ const CalendarSection: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedEvents, setSelectedEvents] = useState<Event[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const [events, setEvents] = useState<Event[]>([]);
 
-  const events: Event[] = [
-    {
-      id: 1,
-      date: '2025-08-15',
-      title: 'SDKThunder vs Ventspils',
-      time: '19:00',
-      location: 'Xiaomi Arēna, Rīga',
-      type: 'game',
-      opponent: 'Ventspils',
-      status: 'upcoming',
-      description: 'Svarīga mājas spēle pret Ventspils komandu. Atbalsti mūs!',
-      ticketsAvailable: true
-    },
-    {
-      id: 2,
-      date: '2025-08-12',
-      title: 'Treniņš ar jaunajiem spēlētājiem',
-      time: '18:00',
-      location: 'Trenažieru zāle',
-      type: 'training',
-      status: 'upcoming',
-      description: 'Atvērts treniņš jaunajiem talantiem'
-    },
-    {
-      id: 3,
-      date: '2025-08-08',
-      title: 'SDKThunder vs Liepāja',
-      time: '20:00',
-      location: 'Liepājas Olimpiskais centrs',
-      type: 'game',
-      opponent: 'Liepāja',
-      status: 'completed',
-      result: '89:76',
-      description: 'Lieliska uzvaras spēle!'
-    },
-    {
-      id: 4,
-      date: '2025-08-20',
-      title: 'Fanu tikšanās',
-      time: '17:00',
-      location: 'Xiaomi Arēna',
-      type: 'event',
-      status: 'upcoming',
-      description: 'Tikšanās ar faniem un autografu sesija'
-    },
-    {
-      id: 5,
-      date: '2025-08-25',
-      title: 'EuroBasket kvalifikācija',
-      time: '19:30',
-      location: 'Xiaomi Arēna, Rīga',
-      type: 'game',
-      opponent: 'Igaunija',
-      status: 'upcoming',
-      description: 'Svarīga kvalifikācijas spēle EuroBasket 2025',
-      ticketsAvailable: true
-    }
-  ];
+  useEffect(() => {
+    const fetchEvents = async () => {
+      const res = await fetch('/api/calendar');
+      const data = await res.json();
+
+      const enriched = data.map((event: any): Event => {
+        const dateObj = new Date(event.date);
+        const now = new Date();
+
+        const time = dateObj.toLocaleTimeString('lv-LV', {
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        let type: Event['type'] = 'event';
+        if (/treniņ/i.test(event.title)) type = 'training';
+        else if (/vs|pret|spēle/i.test(event.title)) type = 'game';
+
+        const isPast = dateObj < now;
+        const isToday = dateObj.toDateString() === now.toDateString();
+
+        const status: Event['status'] = isToday ? 'live' : isPast ? 'completed' : 'upcoming';
+
+        return {
+          id: event.id,
+          title: event.title,
+          description: event.description || '',
+          date: event.date,
+          time,
+          location: event.location || '',
+          type,
+          opponent: undefined,
+          status,
+          result: undefined,
+          ticketsAvailable: false
+        };
+      });
+
+      setEvents(enriched);
+    };
+
+    fetchEvents();
+  }, []);
 
   const monthNames = [
     'Janvāris', 'Februāris', 'Marts', 'Aprīlis', 'Maijs', 'Jūnijs',
@@ -170,15 +156,9 @@ const CalendarSection: React.FC = () => {
     }
   };
 
-  const isCurrentMonth = (date: Date): boolean => {
-    return date.getMonth() === currentDate.getMonth();
-  };
-
-  const isToday = (date: Date): boolean => {
-    const today = new Date();
-    return date.toDateString() === today.toDateString();
-  };
-
+  const isCurrentMonth = (date: Date): boolean => date.getMonth() === currentDate.getMonth();
+  const isToday = (date: Date): boolean => date.toDateString() === new Date().toDateString();
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-slate-100">
       <div className="pt-8 pb-20">
