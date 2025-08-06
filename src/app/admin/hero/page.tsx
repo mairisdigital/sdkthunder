@@ -164,73 +164,104 @@ export default function AdminHero() {
     }
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'background' | 'logo') => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'background' | 'logo') => {
+  const file = e.target.files?.[0];
+  if (!file) return;
 
-    // Validācija
-    if (!file.type.includes('image/')) {
-      alert('Lūdzu, izvēlieties attēla failu.');
-      return;
-    }
+  // Validācija
+  if (!file.type.includes('image/')) {
+    alert('Lūdzu, izvēlieties attēla failu.');
+    return;
+  }
 
-    setIsUploading(prev => ({ ...prev, [type]: true }));
-    setUploadProgress(prev => ({ ...prev, [type]: 0 }));
+  setIsUploading(prev => ({ ...prev, [type]: true }));
+  setUploadProgress(prev => ({ ...prev, [type]: 0 }));
 
-    try {
-      // Simulējam progress
-      const progressInterval = setInterval(() => {
-        setUploadProgress(prev => {
-          const current = prev[type];
-          return { ...prev, [type]: Math.min(current + 10, 90) };
-        });
-      }, 300);
-
-      // Izveidojam formData
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('folder', `sdkthunder/${type}`);
-
-      // Sūtam uz Cloudinary
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
+  try {
+    // Simulējam progress
+    const progressInterval = setInterval(() => {
+      setUploadProgress(prev => {
+        const current = prev[type];
+        return { ...prev, [type]: Math.min(current + 10, 90) };
       });
+    }, 300);
 
-      clearInterval(progressInterval);
-      setUploadProgress(prev => ({ ...prev, [type]: 100 }));
+    // Izveidojam formData
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('folder', `sdkthunder/${type}`);
 
-      if (!response.ok) {
-        throw new Error('Failed to upload');
-      }
+    // Sūtam uz Cloudinary
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData
+    });
 
-      const result = await response.json();
-      
-      // Atjauninam datus
-      if (type === 'background') {
-        handleInputChange('backgroundImage', result.url);
-        handleInputChange('usePatternBg', false);
-      } else {
-        handleInputChange('logoImage', result.url);
-      }
+    clearInterval(progressInterval);
+    setUploadProgress(prev => ({ ...prev, [type]: 100 }));
 
-      // Reset file input
-      if (type === 'background' && backgroundFileInputRef.current) {
-        backgroundFileInputRef.current.value = '';
-      } else if (type === 'logo' && logoFileInputRef.current) {
-        logoFileInputRef.current.value = '';
-      }
-
-    } catch (error) {
-      console.error(`Error uploading ${type} image:`, error);
-      alert(`Kļūda augšupielādējot attēlu. Lūdzu, mēģiniet vēlreiz.`);
-    } finally {
-      setTimeout(() => {
-        setIsUploading(prev => ({ ...prev, [type]: false }));
-        setUploadProgress(prev => ({ ...prev, [type]: 0 }));
-      }, 500);
+    if (!response.ok) {
+      throw new Error('Failed to upload');
     }
-  };
+
+    const result = await response.json();
+    console.log('✅ Upload result:', result); // Debug log
+    
+    // Atjauninam lokālos datus
+    if (type === 'background') {
+      handleInputChange('backgroundImage', result.url);
+      handleInputChange('usePatternBg', false);
+    } else {
+      handleInputChange('logoImage', result.url);
+    }
+
+    // 🚀 SVARĪGI: Automātiski saglabājam datubāzē!
+    const updatedData = {
+      ...data,
+      [type === 'background' ? 'backgroundImage' : 'logoImage']: result.url
+    };
+    
+    if (type === 'background') {
+      updatedData.usePatternBg = false;
+    }
+
+    // Saglabājam datubāzē
+    const saveResponse = await fetch('/api/admin/hero', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ...updatedData,
+        countdownDate: new Date(updatedData.countdownDate).toISOString()
+      }),
+    });
+
+    if (saveResponse.ok) {
+      console.log('✅ Auto-saved to database');
+      setSaveStatus('success');
+      setTimeout(() => setSaveStatus('idle'), 2000);
+    } else {
+      console.error('❌ Failed to auto-save');
+    }
+
+    // Reset file input
+    if (type === 'background' && backgroundFileInputRef.current) {
+      backgroundFileInputRef.current.value = '';
+    } else if (type === 'logo' && logoFileInputRef.current) {
+      logoFileInputRef.current.value = '';
+    }
+
+  } catch (error) {
+    console.error(`Error uploading ${type} image:`, error);
+    alert(`Kļūda augšupielādējot attēlu. Lūdzu, mēģiniet vēlreiz.`);
+  } finally {
+    setTimeout(() => {
+      setIsUploading(prev => ({ ...prev, [type]: false }));
+      setUploadProgress(prev => ({ ...prev, [type]: 0 }));
+    }, 500);
+  }
+};
 
   const handleRemoveImage = (type: 'background' | 'logo') => {
     if (type === 'background') {

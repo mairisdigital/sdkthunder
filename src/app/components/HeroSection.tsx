@@ -16,6 +16,9 @@ interface HeroSettings {
   countdownSubtitle: string;
   countdownDate: string; // ISO string format
   backgroundOverlay: string;
+  backgroundImage: string | null; // Cloudinary URL
+  logoImage: string | null; // Cloudinary URL
+  usePatternBg: boolean;
 }
 
 const HeroSection: React.FC = () => {
@@ -38,10 +41,21 @@ const HeroSection: React.FC = () => {
     countdownTitle: "FIBA EuroBasket",
     countdownSubtitle: "2025",
     countdownDate: new Date("2025-08-27T00:00:00Z").toISOString(),
-    backgroundOverlay: "#7c2d12"
+    backgroundOverlay: "#7c2d12",
+    backgroundImage: null,
+    logoImage: null,
+    usePatternBg: true
   });
 
   const [loading, setLoading] = useState(true);
+  const [imageLoading, setImageLoading] = useState({
+    background: false,
+    logo: false
+  });
+  const [imageErrors, setImageErrors] = useState({
+    background: false,
+    logo: false
+  });
 
   // Ielādējam datus no datubāzes
   useEffect(() => {
@@ -60,7 +74,15 @@ const HeroSection: React.FC = () => {
       const response = await fetch('/api/admin/hero');
       if (response.ok) {
         const heroData = await response.json();
+        
+        // 🔍 DEBUG: Apskatīsim, kas nāk no API
+        console.log('Hero data from API:', heroData);
+        console.log('Logo image URL:', heroData.logoImage);
+        console.log('Background image URL:', heroData.backgroundImage);
+        
         setSettings(heroData);
+      } else {
+        console.warn('Failed to fetch hero data, using defaults');
       }
     } catch (error) {
       console.error('Error fetching Hero data:', error);
@@ -87,6 +109,41 @@ const HeroSection: React.FC = () => {
     setTimeLeft({ days, hours, minutes, seconds });
   };
 
+  // Image loading handlers
+  const handleImageLoad = (type: 'background' | 'logo') => {
+    setImageLoading(prev => ({ ...prev, [type]: false }));
+    setImageErrors(prev => ({ ...prev, [type]: false }));
+  };
+
+  const handleImageError = (type: 'background' | 'logo') => {
+    setImageLoading(prev => ({ ...prev, [type]: false }));
+    setImageErrors(prev => ({ ...prev, [type]: true }));
+    console.error(`Failed to load ${type} image from Cloudinary`);
+  };
+
+  const handleImageLoadStart = (type: 'background' | 'logo') => {
+    setImageLoading(prev => ({ ...prev, [type]: true }));
+  };
+
+  // Background style generator
+  const getBackgroundStyle = () => {
+    // Ja izmanto pattern background vai nav custom attēla
+    if (settings.usePatternBg || !settings.backgroundImage || imageErrors.background) {
+      return {
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23991b1b' fill-opacity='0.6'%3E%3Cpath d='M30 0l30 30-30 30L0 30 30 0zm15 30L30 15 15 30l15 15 15-15zm-15-9l9 9-9 9-9-9 9-9z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+        backgroundColor: settings.backgroundOverlay
+      };
+    }
+    
+    // Custom Cloudinary background
+    return {
+      backgroundImage: `url(${settings.backgroundImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat'
+    };
+  };
+
   if (loading) {
     return (
       <div className="relative min-h-screen overflow-hidden">
@@ -101,18 +158,40 @@ const HeroSection: React.FC = () => {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
+      {/* Background Layer */}
       <div 
-        className="absolute inset-0 opacity-90"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23991b1b' fill-opacity='0.6'%3E%3Cpath d='M30 0l30 30-30 30L0 30 30 0zm15 30L30 15 15 30l15 15 15-15zm-15-9l9 9-9 9-9-9 9-9z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          backgroundColor: settings.backgroundOverlay
-        }}
+        className="absolute inset-0 opacity-90 transition-all duration-500"
+        style={getBackgroundStyle()}
       />
 
+      {/* Loading overlay for background image */}
+      {imageLoading.background && settings.backgroundImage && !settings.usePatternBg && (
+        <div className="absolute inset-0 bg-gray-800 flex items-center justify-center z-5">
+          <div className="text-white text-center">
+            <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+            <p className="text-sm">Ielādē fona attēlu...</p>
+          </div>
+        </div>
+      )}
+
+      {/* Preload background image if exists */}
+      {settings.backgroundImage && !settings.usePatternBg && (
+        <img
+          src={settings.backgroundImage}
+          alt=""
+          className="hidden"
+          onLoad={() => handleImageLoad('background')}
+          onError={() => handleImageError('background')}
+          onLoadStart={() => handleImageLoadStart('background')}
+        />
+      )}
+
+      {/* Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-red-900/30 to-black/60" />
 
       <div className="relative z-10 container mx-auto px-4 flex flex-col justify-center min-h-screen text-white">
         
+        {/* Title Section */}
         <div className="text-center mb-8">
           <h1 className="text-6xl md:text-8xl font-bold mb-4 drop-shadow-2xl">
             <span className="bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
@@ -127,15 +206,39 @@ const HeroSection: React.FC = () => {
           </p>
         </div>
 
+        {/* Logo Section */}
         <div className="flex justify-center mb-12">
           <div className="relative group">
             <div className="w-48 h-48 md:w-64 md:h-64 bg-gradient-to-br from-red-600/20 to-red-800/20 backdrop-blur-sm rounded-full p-4 shadow-2xl transform group-hover:scale-105 transition-all duration-500 border-2 border-white/20">
-              <div className="w-full h-full rounded-full overflow-hidden bg-white/10 backdrop-blur-sm flex items-center justify-center">
-                <img 
-                  src="/SDKThunderLogo.svg" 
-                  alt="SDK Thunder Logo" 
-                  className="w-full h-full object-contain rounded-full filter drop-shadow-lg"
-                />
+              <div className="w-full h-full rounded-full overflow-hidden bg-white/10 backdrop-blur-sm flex items-center justify-center relative">
+                
+                {/* Loading spinner for logo */}
+                {imageLoading.logo && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-white/10">
+                    <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                )}
+
+                {/* Logo Image */}
+                {settings.logoImage && !imageErrors.logo ? (
+                  <img 
+                    src={settings.logoImage}
+                    alt="SDK Thunder Logo" 
+                    className={`w-full h-full object-contain rounded-full filter drop-shadow-lg transition-opacity duration-300 ${
+                      imageLoading.logo ? 'opacity-0' : 'opacity-100'
+                    }`}
+                    onLoad={() => handleImageLoad('logo')}
+                    onError={() => handleImageError('logo')}
+                    onLoadStart={() => handleImageLoadStart('logo')}
+                  />
+                ) : (
+                  // Fallback to local logo if Cloudinary fails or no custom logo
+                  <img 
+                    src="/SDKThunderLogo.svg" 
+                    alt="SDK Thunder Logo" 
+                    className="w-full h-full object-contain rounded-full filter drop-shadow-lg"
+                  />
+                )}
               </div>
             </div>
 
@@ -143,6 +246,7 @@ const HeroSection: React.FC = () => {
           </div>
         </div>
 
+        {/* Taglines and Button */}
         <div className="flex flex-col md:flex-row justify-center items-center gap-8 mb-16">
           <div className="flex flex-col items-center">
             <h2 className="text-4xl md:text-6xl font-bold mb-4 text-shadow-lg italic transform -rotate-2">
@@ -162,6 +266,7 @@ const HeroSection: React.FC = () => {
           </div>
         </div>
 
+        {/* Countdown */}
         <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 max-w-2xl mx-auto shadow-2xl">
           <div className="text-center mb-6">
             <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
