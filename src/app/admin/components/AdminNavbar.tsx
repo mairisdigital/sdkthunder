@@ -15,7 +15,8 @@ import {
   Trophy,
   ArrowLeft,
   Menu,
-  Layout
+  Layout,
+  Zap  // Jauna ikona Events sadaļai
 } from 'lucide-react';
 
 const AdminNavbar: React.FC = () => {
@@ -26,6 +27,7 @@ const AdminNavbar: React.FC = () => {
     { name: 'TopBar', href: '/admin/topbar', icon: Settings },
     { name: 'Navbar', href: '/admin/navbar', icon: Menu },
     { name: 'Hero', href: '/admin/hero', icon: Layout },
+    { name: 'Pasākumi', href: '/admin/events', icon: Zap }, // Jauns punkts
     { name: 'Jaunumi', href: '/admin/news', icon: Newspaper },
     { name: 'Kalendārs', href: '/admin/calendar', icon: Calendar },
     { name: 'Galerija', href: '/admin/gallery', icon: Image },

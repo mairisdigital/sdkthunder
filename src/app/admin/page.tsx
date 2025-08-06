@@ -12,7 +12,8 @@ import {
   BarChart3,
   Eye,
   Menu,
-  Layout
+  Layout,
+  Zap
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -41,6 +42,14 @@ export default function AdminDashboard() {
       icon: Layout,
       color: 'from-orange-500 to-orange-600',
       stats: 'Virsraksti, saukļi, laika atskaite'
+    },
+    {
+      name: 'Pasākumi',
+      description: 'Pārvaldīt tuvāko sporta pasākumu sadaļu un informāciju',
+      href: '/admin/events',
+      icon: Zap,
+      color: 'from-purple-500 to-purple-600',
+      stats: 'EuroBasket 2025, logos, pogas'
     },
     {
       name: 'Jaunumi',

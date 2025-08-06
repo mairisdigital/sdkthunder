@@ -71,6 +71,33 @@ model HeroSettings {
   @@map("hero_settings")
 }
 
+// Events section settings
+model EventsSettings {
+  id                    Int      @id @default(autoincrement())
+  title                 String   @default("Tuvākie sporta")
+  subtitle              String   @default("pasākumi")
+  eventTitle            String   @default("FIBA EuroBasket 2025")
+  eventSubtitle         String?  @default("")
+  eventDescription      String?  @default("")
+  eventLocation         String?  @default("Rīga, Latvija")
+  eventDates            String?  @default("27/08 - 14/09")
+  eventYear             String?  @default("2025")
+  eventType             String?  @default("Čempionāts")
+  eventTeams            String?  @default("24 komandas")
+  buttonText            String   @default("PILNS KALENDĀRS")
+  buttonLink            String   @default("/calendar")
+  logoImage             String?  // Cloudinary URL
+  backgroundGradient    String   @default("from-red-600 to-red-700")
+  showAdditionalText    Boolean  @default(true)
+  additionalText        String?  @default("Vairāk sporta pasākumu un spēļu skatīties kalendārā")
+  additionalButtonText  String?  @default("Skatīt visus pasākumus")
+  additionalButtonLink  String?  @default("/calendar")
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("events_settings")
+}
+
 // News articles
 model News {
   id          Int      @id @default(autoincrement())
