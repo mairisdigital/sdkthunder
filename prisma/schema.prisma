@@ -55,6 +55,29 @@ model NavbarMenuItem {
   @@map("navbar_menu_items")
 }
 
+// HeroSection settings
+model HeroSettings {
+  id                Int      @id @default(autoincrement())
+  title             String   @default("SDKThunder")
+  subtitle          String   @default("SPORTA DRAUGU KLUBS")
+  locationText      String   @default("Nākamā pietura - Xiaomi Arēna, Rīga, Latvija.")
+  tagline1          String   @default("Mēs Ticam !")
+  tagline2          String   @default("Jūs Varat !")
+  buttonText        String   @default("KALENDĀRS")
+  buttonLink        String   @default("/calendar")
+  countdownTitle    String   @default("FIBA EuroBasket")
+  countdownSubtitle String   @default("2025")
+  countdownDate     DateTime @default(now())
+  backgroundOverlay String?  @default("#7c2d12")
+  backgroundImage   String?  // Cloudinary URL
+  logoImage         String?  // Cloudinary URL
+  usePatternBg      Boolean  @default(true) // Vai izmantot pattern vai attēlu
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("hero_settings")
+}
+
 // News articles
 model News {
   id          Int      @id @default(autoincrement())

@@ -14,7 +14,8 @@ import {
   Mail,
   Trophy,
   ArrowLeft,
-  Menu
+  Menu,
+  Layout
 } from 'lucide-react';
 
 const AdminNavbar: React.FC = () => {
@@ -24,6 +25,7 @@ const AdminNavbar: React.FC = () => {
     { name: 'Pārskats', href: '/admin', icon: Home },
     { name: 'TopBar', href: '/admin/topbar', icon: Settings },
     { name: 'Navbar', href: '/admin/navbar', icon: Menu },
+    { name: 'Hero', href: '/admin/hero', icon: Layout },
     { name: 'Jaunumi', href: '/admin/news', icon: Newspaper },
     { name: 'Kalendārs', href: '/admin/calendar', icon: Calendar },
     { name: 'Galerija', href: '/admin/gallery', icon: Image },
