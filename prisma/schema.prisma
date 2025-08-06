@@ -62,9 +62,9 @@ model HeroSettings {
   countdownSubtitle String   @default("2025")
   countdownDate     DateTime @default(now())
   backgroundOverlay String?  @default("#7c2d12")
-  backgroundImage   String?  // Cloudinary URL
-  logoImage         String?  // Cloudinary URL
-  usePatternBg      Boolean  @default(true) // Vai izmantot pattern vai attēlu
+  backgroundImage   String?  
+  logoImage         String?  
+  usePatternBg      Boolean  @default(true)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
@@ -86,7 +86,7 @@ model EventsSettings {
   eventTeams            String?  @default("24 komandas")
   buttonText            String   @default("PILNS KALENDĀRS")
   buttonLink            String   @default("/calendar")
-  logoImage             String?  // Cloudinary URL
+  logoImage             String?  
   backgroundGradient    String   @default("from-red-600 to-red-700")
   showAdditionalText    Boolean  @default(true)
   additionalText        String?  @default("Vairāk sporta pasākumu un spēļu skatīties kalendārā")
@@ -96,6 +96,29 @@ model EventsSettings {
   updatedAt             DateTime @updatedAt
 
   @@map("events_settings")
+}
+
+// Partners
+model Partner {
+  id          Int         @id @default(autoincrement())
+  name        String
+  description String?
+  logo        String?     
+  tier        PartnerTier @default(BRONZE)
+  website     String?
+  active      Boolean     @default(true)
+  order       Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("partners")
+}
+
+enum PartnerTier {
+  GOLD
+  SILVER  
+  BRONZE
+  PARTNER  
 }
 
 // News articles
@@ -198,29 +221,6 @@ model GalleryItem {
 enum MediaType {
   PHOTO
   VIDEO
-}
-
-// Partners
-model Partner {
-  id          Int         @id @default(autoincrement())
-  name        String
-  type        String
-  description String?
-  logo        String?
-  tier        PartnerTier @default(BRONZE)
-  website     String?
-  active      Boolean     @default(true)
-  order       Int         @default(0)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-
-  @@map("partners")
-}
-
-enum PartnerTier {
-  GOLD
-  SILVER
-  BRONZE
 }
 
 // Contact form submissions
