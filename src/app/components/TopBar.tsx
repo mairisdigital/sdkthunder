@@ -137,7 +137,7 @@ const TopBar: React.FC = () => {
           </div>
 
           {/* Centrālā daļa - Vārda dienas */}
-          <div className="flex items-center justify-center ml-20 lg:absolute lg:left-1/2 lg:transform lg:-translate-x-1/2">
+          <div className="hidden lg:flex items-center justify-center lg:absolute lg:left-1/2 lg:transform lg:-translate-x-1/2">
             <div className="bg-slate-800/60 backdrop-blur-sm rounded-lg px-4 py-2 border border-slate-700/50">
               <div className="flex items-center space-x-3 text-sm">
                 <div className="flex items-center text-red-400">
