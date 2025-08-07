@@ -78,21 +78,6 @@ const EventsSection: React.FC = () => {
     }
   };
 
-  // Image loading handlers
-  const handleImageLoad = () => {
-    setImageLoading(false);
-    setImageError(false);
-  };
-
-  const handleImageError = () => {
-    setImageLoading(false);
-    setImageError(true);
-    console.error('Failed to load events logo from Cloudinary');
-  };
-
-  const handleImageLoadStart = () => {
-    setImageLoading(true);
-  };
 
   if (loading) {
     return (

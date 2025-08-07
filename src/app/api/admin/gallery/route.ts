@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '../../../../../lib/prisma';
+import { MediaType } from '@prisma/client';
 
 // GET - Iegūt visus galerijas ierakstus
 export async function GET(req: Request) {
@@ -8,12 +9,15 @@ export async function GET(req: Request) {
     const category = searchParams.get('category');
     const type = searchParams.get('type');
     
-    const where: any = {};
+    const where: {
+      category?: string;
+      type?: MediaType;
+    } = {};
     if (category && category !== 'all') {
       where.category = category;
     }
     if (type) {
-      where.type = type;
+      where.type = type as MediaType;
     }
     
     const items = await prisma.galleryItem.findMany({

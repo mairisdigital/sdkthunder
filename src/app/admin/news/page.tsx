@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { 
   Plus,
@@ -78,7 +78,7 @@ const AdminNewsPage: React.FC = () => {
     sortBy: 'newest'
   });
 
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     let result = [...articles];
 
     if (filters.search) {
@@ -106,7 +106,7 @@ const AdminNewsPage: React.FC = () => {
     });
 
     setFilteredArticles(result);
-  };
+  }, [articles, filters]);
 
   useEffect(() => {
     fetchArticles();

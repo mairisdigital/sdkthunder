@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   Save, 
   Eye, 
@@ -84,7 +84,7 @@ export default function AdminHero() {
     fetchHeroData();
   }, []);
 
-  const updateCountdown = () => {
+  const updateCountdown = useCallback(() => {
     const targetDate = new Date(data.countdownDate);
     const now = new Date();
     const difference = targetDate.getTime() - now.getTime();
@@ -100,7 +100,7 @@ export default function AdminHero() {
     const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
     setTimeLeft({ days, hours, minutes, seconds });
-  };
+  }, [data.countdownDate]);
 
   // Imitējam countdown
   useEffect(() => {
@@ -416,7 +416,7 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'b
                       <div className="relative w-full h-full">
                         <NextImage 
                           src={data.logoImage!}
-                          alt="Logo"
+                          alt=""
                           fill
                           className="object-contain"
                         />
@@ -740,7 +740,7 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'b
                         {data.logoImage ? (
                           <NextImage
                             src={data.logoImage!}
-                            alt="Logo"
+                            alt=""
                             fill
                             className="object-contain"
                           />

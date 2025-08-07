@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import {
   Image as ImageIcon,
@@ -78,7 +78,7 @@ export default function AdminGallery() {
     fetchGalleryItems();
   }, []);
 
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     let filtered = [...items];
 
     if (filters.search) {
@@ -103,7 +103,7 @@ export default function AdminGallery() {
     }
 
     setFilteredItems(filtered);
-  };
+  }, [items, filters]);
 
   useEffect(() => {
     applyFilters();

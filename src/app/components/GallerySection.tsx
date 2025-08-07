@@ -52,9 +52,7 @@ const GallerySection: React.FC = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
-  // const [loading, setLoading] = useState(true);
   const [likedItems, setLikedItems] = useState<Set<number>>(new Set());
-  // const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
 
   // Kategorijas
@@ -88,7 +86,7 @@ const GallerySection: React.FC = () => {
   };
 
   const fetchGalleryItems = async () => {
-    setLoading(true);
+    // setLoading(true);
     try {
       const res = await fetch('/api/gallery');
       if (res.ok) {
@@ -125,7 +123,7 @@ const GallerySection: React.FC = () => {
     } catch (error) {
       console.error('Error fetching gallery items:', error);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -225,8 +223,7 @@ const GallerySection: React.FC = () => {
     setSelectedMedia(media);
     setCurrentImageIndex(imageIndex);
     setLightboxOpen(true);
-    setIsVideoPlaying(false);
-    
+    // setIsVideoPlaying(false);
     incrementViews(media.id);
   };
 
@@ -234,7 +231,7 @@ const GallerySection: React.FC = () => {
     setLightboxOpen(false);
     setSelectedMedia(null);
     setCurrentImageIndex(0);
-    setIsVideoPlaying(false);
+    // setIsVideoPlaying(false);
   };
 
   const nextImage = () => {
@@ -760,11 +757,3 @@ const GallerySection: React.FC = () => {
 
 export default GallerySection;
 
-function setLoading(_arg0: boolean) {
-  throw new Error('Function not implemented.');
-}
-
-
-function setIsVideoPlaying(_arg0: boolean) {
-  throw new Error('Function not implemented.');
-}

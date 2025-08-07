@@ -122,10 +122,6 @@ const HeroSection: React.FC = () => {
     console.error(`Failed to load ${type} image from Cloudinary`);
   };
 
-  const handleImageLoadStart = (type: 'background' | 'logo') => {
-    setImageLoading(prev => ({ ...prev, [type]: true }));
-  };
-
   // Background style generator
   const getBackgroundStyle = () => {
     // Ja izmanto pattern background vai nav custom attēla
