@@ -9,6 +9,9 @@ import {
   Facebook,
   Instagram,
   Youtube,
+  CheckCircle,
+  AlertCircle,
+  Loader2
 } from 'lucide-react';
 
 const ContactsSection: React.FC = () => {
@@ -19,6 +22,10 @@ const ContactsSection: React.FC = () => {
     message: ''
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -27,10 +34,37 @@ const ContactsSection: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    setFormData({ name: '', email: '', subject: '', message: '' });
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+    setErrorMessage('');
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setSubmitStatus('success');
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      } else {
+        setSubmitStatus('error');
+        setErrorMessage(result.error || 'Kļūda sūtot ziņu');
+      }
+    } catch (error) {
+      setSubmitStatus('error');
+      setErrorMessage('Kļūda sūtot ziņu. Pārbaudiet interneta savienojumu.');
+      console.error('Error submitting form:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
@@ -81,6 +115,27 @@ const ContactsSection: React.FC = () => {
                 Sūti mums ziņu
               </h3>
 
+              {/* Status ziņas */}
+              {submitStatus === 'success' && (
+                <div className="mb-6 p-4 bg-green-500/20 border border-green-500/50 rounded-xl flex items-center">
+                  <CheckCircle className="w-5 h-5 text-green-400 mr-3 flex-shrink-0" />
+                  <div>
+                    <p className="text-green-100 font-medium">Ziņa veiksmīgi nosūtīta!</p>
+                    <p className="text-green-200 text-sm mt-1">Mēs drīzumā ar jums sazināsimies.</p>
+                  </div>
+                </div>
+              )}
+
+              {submitStatus === 'error' && (
+                <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-xl flex items-center">
+                  <AlertCircle className="w-5 h-5 text-red-400 mr-3 flex-shrink-0" />
+                  <div>
+                    <p className="text-red-100 font-medium">Kļūda!</p>
+                    <p className="text-red-200 text-sm mt-1">{errorMessage}</p>
+                  </div>
+                </div>
+              )}
+
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="group">
@@ -95,7 +150,8 @@ const ContactsSection: React.FC = () => {
                         value={formData.name}
                         onChange={handleInputChange}
                         required
-                        className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-gray-400 focus:border-red-400 focus:ring-2 focus:ring-red-400/20 focus:outline-none transition-all duration-300"
+                        disabled={isSubmitting}
+                        className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-gray-400 focus:border-red-400 focus:ring-2 focus:ring-red-400/20 focus:outline-none transition-all duration-300 disabled:opacity-50"
                         placeholder="Tavs vārds"
                       />
                     </div>
@@ -113,7 +169,8 @@ const ContactsSection: React.FC = () => {
                         value={formData.email}
                         onChange={handleInputChange}
                         required
-                        className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-gray-400 focus:border-red-400 focus:ring-2 focus:ring-red-400/20 focus:outline-none transition-all duration-300"
+                        disabled={isSubmitting}
+                        className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-gray-400 focus:border-red-400 focus:ring-2 focus:ring-red-400/20 focus:outline-none transition-all duration-300 disabled:opacity-50"
                         placeholder="tavs@epasts.lv"
                       />
                     </div>
@@ -129,7 +186,8 @@ const ContactsSection: React.FC = () => {
                     name="subject"
                     value={formData.subject}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-gray-400 focus:border-red-400 focus:ring-2 focus:ring-red-400/20 focus:outline-none transition-all duration-300"
+                    disabled={isSubmitting}
+                    className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-gray-400 focus:border-red-400 focus:ring-2 focus:ring-red-400/20 focus:outline-none transition-all duration-300 disabled:opacity-50"
                     placeholder="Ziņas temats"
                   />
                 </div>
@@ -143,19 +201,30 @@ const ContactsSection: React.FC = () => {
                     value={formData.message}
                     onChange={handleInputChange}
                     required
+                    disabled={isSubmitting}
                     rows={5}
-                    className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-gray-400 focus:border-red-400 focus:ring-2 focus:ring-red-400/20 focus:outline-none transition-all duration-300 resize-none"
+                    className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-gray-400 focus:border-red-400 focus:ring-2 focus:ring-red-400/20 focus:outline-none transition-all duration-300 resize-none disabled:opacity-50"
                     placeholder="Raksti savu ziņu šeit..."
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-[1.02] shadow-lg group"
+                  disabled={isSubmitting}
+                  className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-[1.02] shadow-lg group disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
                   <span className="flex items-center justify-center">
-                    Nosūtīt ziņu
-                    <Send className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Sūta ziņu...
+                      </>
+                    ) : (
+                      <>
+                        Nosūtīt ziņu
+                        <Send className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                      </>
+                    )}
                   </span>
                 </button>
               </form>
@@ -206,7 +275,6 @@ const ContactsSection: React.FC = () => {
                 ))}
               </div>
             </div>
-
           </div>
         </div>
       </div>
