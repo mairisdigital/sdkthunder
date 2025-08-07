@@ -148,3 +148,79 @@ model CalendarEvent {
 
   @@map("calendar_events")
 }
+
+model GalleryItem {
+  id Int @id @default(autoincrement())
+  title String
+  type MediaType @default(PHOTO)
+  url String // Šis būs galvenais media URL (foto vai video)
+  thumbnail String?
+  mainImage String? // Galvenais attēls (parādīsies kā cover)
+  additionalImages String[] // Papildus attēli
+  additionalUrls String[]
+  category String @default("all")
+  tags String[]
+  description String?
+  author String @default("SDKThunder")
+  featured Boolean @default(false)
+  order Int @default(0)
+  views Int @default(0)
+  likes Int @default(0)
+  duration String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("gallery_items")
+}
+
+enum MediaType {
+  PHOTO
+  VIDEO
+}
+
+model AboutContent {
+  id Int @id @default(autoincrement())
+  title String
+  subtitle String?
+  mainStory String @db.Text
+  slogan1 String?
+  slogan2 String?
+  slogan3 String?
+  foundedYear String @default("2018")
+  logoUrl String?
+  backgroundImageUrl String?
+  ctaText String?
+  ctaSubtext String @db.Text
+  contactButtonText String @default("Sazināties ar mums")
+  learnMoreButtonText String @default("Uzzināt vairāk")
+  isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("about_content")
+}
+
+model AboutValue {
+  id Int @id @default(autoincrement())
+  text String
+  order Int @default(0)
+  isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("about_values")
+}
+
+model AboutStat {
+  id Int @id @default(autoincrement())
+  icon String // Icon name
+  number String
+  label String @db.Text
+  color String @default("from-blue-500 to-blue-600")
+  order Int @default(0)
+  isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("about_stats")
+}

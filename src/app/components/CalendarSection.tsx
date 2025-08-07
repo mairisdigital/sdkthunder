@@ -87,8 +87,22 @@ const CalendarSection: React.FC = () => {
   const dayNames = ['Sv', 'Pr', 'Ot', 'Tr', 'Ce', 'Pk', 'Se'];
 
   const getEventsForDate = (date: Date): Event[] => {
-    const dateString = date.toISOString().split('T')[0];
-    return events.filter(event => event.date === dateString);
+    // Izmantojam vietējo datumu, nevis UTC
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const dateString = `${year}-${month}-${day}`;
+    
+    return events.filter(event => {
+      // Konvertējam notikuma datumu uz vietējo laiku
+      const eventDate = new Date(event.date);
+      const eventYear = eventDate.getFullYear();
+      const eventMonth = String(eventDate.getMonth() + 1).padStart(2, '0');
+      const eventDay = String(eventDate.getDate()).padStart(2, '0');
+      const eventDateString = `${eventYear}-${eventMonth}-${eventDay}`;
+      
+      return eventDateString === dateString;
+    });
   };
 
   const getDaysInMonth = (date: Date): Date[] => {
