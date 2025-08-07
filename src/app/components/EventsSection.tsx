@@ -51,8 +51,6 @@ const EventsSection: React.FC = () => {
   });
 
   const [loading, setLoading] = useState(true);
-  const [imageLoading, setImageLoading] = useState(false);
-  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     fetchEventsData();
@@ -202,22 +200,13 @@ const EventsSection: React.FC = () => {
                       {/* Logo container */}
                       <div className="relative w-full h-full bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl flex items-center justify-center border border-gray-200 group-hover:bg-white/90 transition-all duration-500">
                         
-                        {/* Loading spinner for logo */}
-                        {imageLoading && (
-                          <div className="absolute inset-0 flex items-center justify-center bg-white/10">
-                            <div className="w-8 h-8 border-4 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
-                          </div>
-                        )}
-
                         {/* Logo Image */}
-                        {settings.logoImage && !imageError ? (
+                        {settings.logoImage ? (
                           <Image
                             src={settings.logoImage}
                             alt="Event Logo"
                             fill
-                            className={`object-contain filter drop-shadow-lg group-hover:drop-shadow-xl transition-all duration-500 ${
-                              imageLoading ? 'opacity-0' : 'opacity-100'
-                            }`}
+                            className="object-contain filter drop-shadow-lg group-hover:drop-shadow-xl transition-all duration-500"
                           />
                         ) : (
                           // Placeholder if no Cloudinary logo

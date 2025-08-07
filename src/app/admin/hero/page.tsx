@@ -416,7 +416,7 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'b
                       <div className="relative w-full h-full">
                         <NextImage 
                           src={data.logoImage!}
-                          alt=""
+                          alt="Logo attēls"
                           fill
                           className="object-contain"
                         />
@@ -740,7 +740,7 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'b
                         {data.logoImage ? (
                           <NextImage
                             src={data.logoImage!}
-                            alt=""
+                            alt="Logo attēls"
                             fill
                             className="object-contain"
                           />
