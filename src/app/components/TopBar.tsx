@@ -36,12 +36,12 @@ const TopBar: React.FC = () => {
   });
   
   const [nameDays, setNameDays] = useState<NameDayData>({
-    date: '',
-    names: [],
+    date: '7. augusts',
+    names: ['Alfrēds', 'Fredis', 'Madars'],
     dateKey: ''
   });
   
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchTopBarData();
@@ -115,9 +115,9 @@ const TopBar: React.FC = () => {
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center space-y-2 lg:space-y-0">
           
           {/* Kreisā puse - Kontaktinformācija */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-6 space-y-2 sm:space-y-0">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center lg:justify-start sm:space-x-6 space-y-2 sm:space-y-0">
             {/* E-pasts */}
-            <div className="flex items-center text-sm">
+            <div className="flex items-center justify-center sm:justify-start text-sm">
               <Mail className="w-4 h-4 mr-2 text-red-400" />
               <span className="text-slate-300 font-medium">{data.emailLabel}</span>
               <a 
@@ -129,14 +129,14 @@ const TopBar: React.FC = () => {
             </div>
             
             {/* Atrašanās vieta */}
-            <div className="flex items-center text-sm">
+            <div className="flex items-center justify-center sm:justify-start text-sm">
               <MapPin className="w-4 h-4 mr-2 text-red-400" />
               <span className="text-slate-300 font-medium">{data.locationLabel}</span>
               <span className="ml-2 text-white font-medium">{data.location}</span>
             </div>
           </div>
 
-          {/* Centrālā daļa - Vārda dienas */}
+          {/* Centrālā daļa - Vārda dienas (tikai desktop) */}
           <div className="hidden lg:flex items-center justify-center lg:absolute lg:left-1/2 lg:transform lg:-translate-x-1/2">
             <div className="bg-slate-800/60 backdrop-blur-sm rounded-lg px-4 py-2 border border-slate-700/50">
               <div className="flex items-center space-x-3 text-sm">
@@ -201,29 +201,29 @@ const TopBar: React.FC = () => {
           </div>
         </div>
 
-        {/* Mobilajām ierīcēm - vārda dienas atsevišķā rindā */}
+        {/* Mobilajām ierīcēm - vārda dienas atsevišķā rindā ar mazāku tekstu */}
         <div className="lg:hidden mt-3 pt-2 border-t border-slate-700/50">
           <div className="flex items-center justify-center">
-            <div className="bg-slate-800/60 backdrop-blur-sm rounded-lg px-4 py-2 border border-slate-700/50 group">
-              <div className="flex items-center space-x-3 text-sm">
+            <div className="bg-slate-800/60 backdrop-blur-sm rounded-lg px-3 py-1.5 border border-slate-700/50 group">
+              <div className="flex items-center space-x-2 text-xs">
                 <div className="flex items-center text-red-400">
-                  <Calendar className="w-4 h-4 mr-2" />
+                  <Calendar className="w-3.5 h-3.5 mr-1.5" />
                   <span className="font-medium">{nameDays.date}</span>
                 </div>
                 
-                <div className="h-4 w-px bg-slate-600"></div>
+                <div className="h-3 w-px bg-slate-600"></div>
                 
                 <div className="flex items-center">
-                  <User className="w-4 h-4 mr-2 text-amber-400" />
+                  <User className="w-3.5 h-3.5 mr-1.5 text-amber-400" />
                   <span className="text-slate-300 font-medium">VĀRDA DIENAS:</span>
-                  <span className="ml-2 text-white font-medium">
+                  <span className="ml-1.5 text-white font-medium">
                     {nameDays.names.length > 0 ? nameDays.names.join(', ') : 'Nav vārda dienu'}
                   </span>
                   
                   {/* Error indikators */}
                   {nameDays.error && (
-                    <span className="w-4 h-4 ml-2 text-yellow-400" title={nameDays.error}>
-                      <AlertCircle className="w-4 h-4" />
+                    <span className="w-3.5 h-3.5 ml-1.5 text-yellow-400" title={nameDays.error}>
+                      <AlertCircle className="w-3.5 h-3.5" />
                     </span>
                   )}
                 </div>
