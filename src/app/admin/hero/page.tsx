@@ -415,7 +415,7 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'b
                     {data.logoImage ? (
                       <div className="relative w-full h-full">
                         <NextImage 
-                          src={data.logoImage!}
+                          src={data.logoImage}
                           alt="Logo attēls"
                           fill
                           className="object-contain"
@@ -494,7 +494,7 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'b
                     {data.backgroundImage && !data.usePatternBg ? (
                       <div className="relative w-full h-full">
                         <NextImage 
-                          src={data.backgroundImage!}
+                          src={data.backgroundImage}
                           alt="Fona attēls"
                           fill
                           className="object-cover"
@@ -739,8 +739,8 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'b
                       <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center mb-4 overflow-hidden relative">
                         {data.logoImage ? (
                           <NextImage
-                            src={data.logoImage!}
-                            alt="Logo attēls"
+                            src={data.logoImage}
+                            alt="Logo priekšskatījums"
                             fill
                             className="object-contain"
                           />
