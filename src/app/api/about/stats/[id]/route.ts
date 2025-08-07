@@ -78,7 +78,7 @@ export async function PUT(
     return NextResponse.json(stat);
   } catch (error) {
     console.error('Error updating stat:', error);
-    if (typeof error === 'object' && error !== null && 'code' in error && (error as any).code === 'P2025') {
+    if (typeof error === 'object' && error !== null && 'code' in error && (error as { code?: string }).code === 'P2025') {
       return NextResponse.json(
         { error: 'Stat not found' },
         { status: 404 }
@@ -111,7 +111,7 @@ export async function DELETE(
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting stat:', error);
-    if (typeof error === 'object' && error !== null && 'code' in error && (error as any).code === 'P2025') {
+    if (typeof error === 'object' && error !== null && 'code' in error && (error as { code?: string }).code === 'P2025') {
       return NextResponse.json(
         { error: 'Stat not found' },
         { status: 404 }

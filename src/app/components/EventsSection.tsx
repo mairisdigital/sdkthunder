@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, MapPin, Trophy, Users } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface EventsSettings {
   id: number;
@@ -225,15 +226,13 @@ const EventsSection: React.FC = () => {
 
                         {/* Logo Image */}
                         {settings.logoImage && !imageError ? (
-                          <img 
+                          <Image
                             src={settings.logoImage}
-                            alt="Event Logo" 
-                            className={`w-40 h-40 lg:w-56 lg:h-56 object-contain filter drop-shadow-lg group-hover:drop-shadow-xl transition-all duration-500 ${
+                            alt="Event Logo"
+                            fill
+                            className={`object-contain filter drop-shadow-lg group-hover:drop-shadow-xl transition-all duration-500 ${
                               imageLoading ? 'opacity-0' : 'opacity-100'
                             }`}
-                            onLoad={handleImageLoad}
-                            onError={handleImageError}
-                            onLoadStart={handleImageLoadStart}
                           />
                         ) : (
                           // Placeholder if no Cloudinary logo

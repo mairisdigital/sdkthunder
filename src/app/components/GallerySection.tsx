@@ -7,19 +7,17 @@ import {
   Grid3X3,
   List,
   Search,
-  Calendar,
   Download,
   Heart,
   Share2,
   X,
-  ZoomIn,
   ChevronLeft,
   ChevronRight,
   ImageIcon,
   Eye,
-  Pause,
   ChevronUp
 } from 'lucide-react';
+import Image from 'next/image';
 
 interface GalleryItem {
   downloads: ReactNode;
@@ -54,9 +52,9 @@ const GallerySection: React.FC = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [likedItems, setLikedItems] = useState<Set<number>>(new Set());
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  // const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
 
   // Kategorijas
@@ -227,7 +225,7 @@ const GallerySection: React.FC = () => {
     setSelectedMedia(media);
     setCurrentImageIndex(imageIndex);
     setLightboxOpen(true);
-    setIsVideoPlaying(false); // Reset video state
+    setIsVideoPlaying(false);
     
     incrementViews(media.id);
   };
@@ -369,7 +367,7 @@ const GallerySection: React.FC = () => {
               ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
               : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
           }`}>
-            {photos.map((photo, index) => {
+            {photos.map((photo) => {
               const allImages = getAllImages(photo);
               const hasMultipleImages = allImages.length > 1;
 
@@ -380,10 +378,11 @@ const GallerySection: React.FC = () => {
                   onClick={() => openLightbox(photo, 0)}
                 >
                   <div className="aspect-square relative overflow-hidden">
-                    <img
+                    <Image
                       src={photo.mainImage || photo.url}
                       alt={`Foto ${photo.id}`}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                     
                     {hasMultipleImages && (
@@ -406,10 +405,11 @@ const GallerySection: React.FC = () => {
                               openLightbox(photo, imgIndex);
                             }}
                           >
-                            <img
+                            <Image
                               src={img}
                               alt={`Preview ${imgIndex + 1}`}
-                              className="w-full h-full object-cover"
+                              fill
+                              className="object-cover"
                             />
                           </div>
                         ))}
@@ -492,10 +492,11 @@ const GallerySection: React.FC = () => {
                   className="aspect-video relative overflow-hidden bg-black cursor-pointer"
                   onClick={() => openLightbox(video, 0)}
                 >
-                  <img
+                  <Image
                     src={video.mainImage || video.thumbnail || video.url}
                     alt={`Video ${video.id}`}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="bg-red-600 hover:bg-red-700 rounded-full p-4 transition-colors">
@@ -606,9 +607,11 @@ const GallerySection: React.FC = () => {
                     
                     return (
                       <>
-                        <img
+                        <Image
                           src={allImages[currentImageIndex]}
                           alt={selectedMedia.title}
+                          width={800}
+                          height={600}
                           className="max-w-full max-h-full object-contain"
                         />
                         
@@ -656,10 +659,12 @@ const GallerySection: React.FC = () => {
                             index === currentImageIndex ? 'border-white' : 'border-gray-500'
                           }`}
                         >
-                          <img
+                          <Image
                             src={img}
                             alt={`Thumbnail ${index + 1}`}
-                            className="w-full h-full object-cover"
+                            width={48}
+                            height={48}
+                            className="object-cover"
                           />
                         </button>
                       ))}
@@ -754,3 +759,12 @@ const GallerySection: React.FC = () => {
 };
 
 export default GallerySection;
+
+function setLoading(_arg0: boolean) {
+  throw new Error('Function not implemented.');
+}
+
+
+function setIsVideoPlaying(_arg0: boolean) {
+  throw new Error('Function not implemented.');
+}

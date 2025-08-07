@@ -376,7 +376,7 @@ export default function AdminTopBar() {
               <h3 className="text-lg font-semibold text-blue-900 mb-3">💡 Padomi</h3>
               <ul className="text-sm text-blue-800 space-y-2">
                 <li>• E-pasta adresei jābūt derīgai, lai apmeklētāji varētu sazināties</li>
-                <li>• Atrašanās vieta tiek rādīta kā "NĀKAMĀ PIETURA"</li>
+                <li>• Atrašanās vieta tiek rādīta kā &quot;NĀKAMĀ PIETURA&quot;</li>
                 <li>• Sociālo tīklu saites var atstāt tukšas, ja nav kontu</li>
                 <li>• Izmaiņas stāsies spēkā uzreiz pēc saglabāšanas</li>
               </ul>

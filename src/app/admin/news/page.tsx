@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { 
   Plus,
   Edit3,
@@ -77,27 +78,6 @@ const AdminNewsPage: React.FC = () => {
     sortBy: 'newest'
   });
 
-  useEffect(() => {
-    fetchArticles();
-  }, []);
-
-  useEffect(() => {
-    applyFilters();
-  }, [articles, filters]);
-
-  const fetchArticles = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch('/api/admin/news');
-      const data: NewsArticle[] = await res.json();
-      setArticles(data);
-    } catch (err) {
-      console.error('Kļūda ielādējot rakstus:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const applyFilters = () => {
     let result = [...articles];
 
@@ -126,6 +106,27 @@ const AdminNewsPage: React.FC = () => {
     });
 
     setFilteredArticles(result);
+  };
+
+  useEffect(() => {
+    fetchArticles();
+  }, []);
+
+  useEffect(() => {
+    applyFilters();
+  }, [articles, filters, applyFilters]);
+
+  const fetchArticles = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/news');
+      const data: NewsArticle[] = await res.json();
+      setArticles(data);
+    } catch (err) {
+      console.error('Kļūda ielādējot rakstus:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const newArticleTemplate: Omit<NewsArticle, 'id' | 'createdAt' | 'updatedAt'> = {
@@ -295,12 +296,12 @@ const AdminNewsPage: React.FC = () => {
             <select value={filters.category} onChange={e => setFilters(f => ({ ...f, category: e.target.value }))} className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500">
               {categories.map(cat => <option key={cat.value} value={cat.value}>{cat.label}</option>)}
             </select>
-            <select value={filters.status} onChange={e => setFilters(f => ({ ...f, status: e.target.value as any }))} className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500">
+            <select value={filters.status} onChange={e => setFilters(f => ({ ...f, status: e.target.value as 'all' | 'published' | 'draft' }))} className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500">
               <option value="all">Visi statusi</option>
               <option value="published">Publicēti</option>
               <option value="draft">Melnraksti</option>
             </select>
-            <select value={filters.sortBy} onChange={e => setFilters(f => ({ ...f, sortBy: e.target.value as any }))} className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500">
+            <select value={filters.sortBy} onChange={e => setFilters(f => ({ ...f, sortBy: e.target.value as 'newest' | 'oldest' | 'views' | 'popularity' }))} className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500">
               <option value="newest">Jaunākie</option>
               <option value="oldest">Vecākie</option>
               <option value="views">Visvairāk skatīti</option>
@@ -329,8 +330,12 @@ const AdminNewsPage: React.FC = () => {
               <div key={article.id} className="p-6 hover:bg-gray-50 transition-colors duration-200">
                 <div className="flex flex-col lg:flex-row gap-4">
                   <div className="lg:w-32 flex-shrink-0">
-                    <div className="w-full h-24 lg:h-20 bg-gray-200 rounded-lg overflow-hidden">
-                      {article.image ? <img src={article.image} alt={article.title} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-6 h-6 text-gray-400"/></div>}
+                    <div className="w-full h-24 lg:h-20 bg-gray-200 rounded-lg overflow-hidden relative">
+                      {article.image ? (
+                        <Image src={article.image} alt={article.title} fill className="object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-6 h-6 text-gray-400"/></div>
+                      )}
                     </div>
                   </div>
                   <div className="flex-1 min-w-0">
@@ -399,7 +404,14 @@ const AdminNewsPage: React.FC = () => {
                       {uploadingImage
                         ? (<div className="flex flex-col items-center"><div className="w-8 h-8 border-4 border-red-600 border-t-transparentrounded-full animate-spin mb-2"/><p className="text-gray-600">Augšupielādē...</p></div>)
                         : editingArticle.image
-                          ? (<div className="flex flex-col items-center"><img src={editingArticle.image} alt="Preview" className="w-32 h-24 object-cover rounded-lg mb-2"/><p className="text-sm text-gray-600">Noklikšķiniet, lai mainītu</p></div>)
+                          ? (
+                              <div className="flex flex-col items-center">
+                                <div className="relative w-32 h-24 mb-2">
+                                  <Image src={editingArticle.image} alt="Preview" width={128} height={96} className="object-cover rounded-lg mb-2" />
+                                </div>
+                                <p className="text-sm text-gray-600">Noklikšķiniet, lai mainītu</p>
+                              </div>
+                            )
                           : (<div className="flex flex-col items-center"><Upload className="w-8 h-8 text-gray-400 mb-2"/><p className="text-gray-600">Noklikšķiniet, lai augšupielādētu</p><p className="text-xs text-gray-500 mt-1">PNG, JPG līdz 5MB</p></div>)}
                     </div>
                     <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />

@@ -13,10 +13,11 @@ import {
   Palette,
   Type,
   Upload,
-  Image,
+  Image as LucideImage,
   Trash2,
   Loader2
 } from 'lucide-react';
+import Image from 'next/image';
 
 interface EventsSettings {
   title: string;
@@ -409,21 +410,23 @@ export default function AdminEvents() {
           {/* Pasākuma logo */}
           <div className="bg-white rounded-xl shadow-lg p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
-              <Image className="w-5 h-5 mr-2 text-red-600" />
+              <LucideImage className="w-5 h-5 mr-2 text-red-600" />
               Pasākuma logo
             </h2>
             
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-shrink-0 w-48 h-48 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 overflow-hidden relative">
                 {data.logoImage ? (
-                  <img 
+                  <Image 
                     src={data.logoImage} 
                     alt="Pasākuma logo" 
-                    className="w-full h-full object-contain p-4" 
+                    fill
+                    className="object-contain p-4"
+                    sizes="(max-width: 768px) 100vw, 400px"
                   />
                 ) : (
                   <div className="text-gray-400 text-sm text-center p-4">
-                    <Image className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                    <LucideImage className="w-12 h-12 mx-auto mb-2 opacity-50" />
                     <span>Nav logo</span>
                   </div>
                 )}
@@ -660,20 +663,22 @@ export default function AdminEvents() {
                           {/* Logo */}
                           <div className="flex-shrink-0 ml-3">
                             <div className="w-16 h-16 relative">
-                              <div className="w-full h-full bg-white/80 rounded-xl shadow-lg flex items-center justify-center border border-gray-200">
-                                {data.logoImage ? (
-                                  <img 
-                                    src={data.logoImage} 
-                                    alt="Event Logo" 
-                                    className="w-12 h-12 object-contain"
-                                  />
-                                ) : (
-                                  <div className="text-gray-400 text-center">
-                                    <Image className="w-6 h-6 mx-auto mb-1 opacity-50" />
-                                    <div className="text-xs font-medium">LOGO</div>
-                                  </div>
-                                )}
+                          <div className="w-full h-full bg-white/80 rounded-xl shadow-lg flex items-center justify-center border border-gray-200">
+                            {data.logoImage ? (
+                              <Image 
+                                src={data.logoImage} 
+                                alt="Event Logo" 
+                                width={48} 
+                                height={48} 
+                                className="object-contain"
+                              />
+                            ) : (
+                              <div className="text-gray-400 text-center">
+                                <LucideImage className="w-6 h-6 mx-auto mb-1 opacity-50" />
+                                <div className="text-xs font-medium">LOGO</div>
                               </div>
+                            )}
+                          </div>
                             </div>
                           </div>
                         </div>

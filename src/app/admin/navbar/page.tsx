@@ -6,9 +6,7 @@ import {
   Eye, 
   Plus,
   Trash2,
-  Move,
   Menu,
-  Home,
   AlertCircle,
   CheckCircle,
   GripVertical
@@ -119,22 +117,6 @@ export default function AdminNavbar() {
     }));
   };
 
-  const moveMenuItem = (fromIndex: number, toIndex: number) => {
-    setData(prev => {
-      const newItems = [...prev.menuItems];
-      const [movedItem] = newItems.splice(fromIndex, 1);
-      newItems.splice(toIndex, 0, movedItem);
-      
-      // Atjauninām order
-      return {
-        ...prev,
-        menuItems: newItems.map((item, index) => ({
-          ...item,
-          order: index + 1
-        }))
-      };
-    });
-  };
 
   const setActiveMenuItem = (index: number) => {
     setData(prev => ({
@@ -423,7 +405,7 @@ export default function AdminNavbar() {
               <ul className="text-sm text-blue-800 space-y-2">
                 <li>• Velciet punktus ar ikonu, lai mainītu secību</li>
                 <li>• Tikai viens punkts var būt aktīvs vienlaicīgi</li>
-                <li>• Izmantojiet "Redzams izvēlnē" lai paslēptu punktus</li>
+                <li>• Izmantojiet &quot;Redzams izvēlnē&quot; lai paslēptu punktus</li>
                 <li>• Logo teksts parādās divās rindās</li>
                 <li>• Izmaiņas stāsies spēkā uzreiz pēc saglabāšanas</li>
               </ul>

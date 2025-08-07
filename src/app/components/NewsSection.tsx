@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Calendar, User, ArrowRight, Eye, MessageCircle, Tag } from 'lucide-react';
 import Link from 'next/link'; // Pievienojiet šo importu
+import Image from 'next/image';
 
 // NewsArticle interfeiss
 interface NewsArticle {
@@ -162,14 +163,11 @@ const NewsSection: React.FC = () => {
             >
               <div className="bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-red-200 hover:scale-[1.02]">
                 <div className="relative h-64 lg:h-80 overflow-hidden">
-                  <img
+                  <Image
                     src={article.image || '/placeholder.jpg'}
                     alt={article.title}
-                    className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = '/placeholder.jpg';
-                    }}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                 </div>
@@ -225,15 +223,12 @@ const NewsSection: React.FC = () => {
                 >
                   <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-red-200 hover:scale-[1.02]">
                     <div className="flex">
-                      <div className="w-24 h-24 flex-shrink-0 overflow-hidden rounded-l-2xl">
-                        <img
+                      <div className="relative w-24 h-24 flex-shrink-0 overflow-hidden rounded-l-2xl">
+                        <Image
                           src={article.image || '/placeholder-small.jpg'}
                           alt={article.title}
-                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = '/placeholder-small.jpg';
-                          }}
+                          fill
+                          className="object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                       </div>
 

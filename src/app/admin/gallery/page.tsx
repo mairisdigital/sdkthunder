@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import {
   Image as ImageIcon,
   Video,
@@ -14,13 +15,11 @@ import {
   Heart,
   Star,
   Search,
-  Filter,
   AlertCircle,
   CheckCircle,
   Loader2,
   Grid3X3,
   List,
-  Clock,
   Youtube,
   Link as LinkIcon,
   Play
@@ -79,26 +78,6 @@ export default function AdminGallery() {
     fetchGalleryItems();
   }, []);
 
-  useEffect(() => {
-    applyFilters();
-  }, [items, filters]);
-
-  const fetchGalleryItems = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch('/api/gallery');
-      if (res.ok) {
-        const data = await res.json();
-        setItems(data);
-      }
-    } catch (error) {
-      console.error('Error fetching gallery items:', error);
-      setSaveStatus('error');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const applyFilters = () => {
     let filtered = [...items];
 
@@ -124,6 +103,26 @@ export default function AdminGallery() {
     }
 
     setFilteredItems(filtered);
+  };
+
+  useEffect(() => {
+    applyFilters();
+  }, [items, filters, applyFilters]);
+
+  const fetchGalleryItems = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/gallery');
+      if (res.ok) {
+        const data = await res.json();
+        setItems(data);
+      }
+    } catch (error) {
+      console.error('Error fetching gallery items:', error);
+      setSaveStatus('error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleAddNew = () => {
@@ -445,7 +444,7 @@ export default function AdminGallery() {
 
           <select
             value={filters.type}
-            onChange={(e) => setFilters({ ...filters, type: e.target.value as any })}
+            onChange={(e) => setFilters({ ...filters, type: e.target.value as 'all' | 'PHOTO' | 'VIDEO' })}
             className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
           >
             <option value="all">Visi tipi</option>
@@ -505,18 +504,20 @@ export default function AdminGallery() {
               {item.url ? (
                 <>
                   {item.type === 'PHOTO' ? (
-                    <img
+                    <Image
                       src={item.mainImage || item.url}
                       alt={item.title}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
                     />
                   ) : (
                     <div className="relative w-full h-full bg-black flex items-center justify-center">
                       {item.thumbnail || item.mainImage ? (
-                        <img
-                          src={item.thumbnail || item.mainImage}
+                        <Image
+                          src={item.thumbnail || item.mainImage || ''}
                           alt={item.title}
-                          className="w-full h-full object-cover"
+                          fill
+                          className="object-cover"
                         />
                       ) : null}
                       <div className="absolute inset-0 flex items-center justify-center">
@@ -704,10 +705,12 @@ export default function AdminGallery() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Foto *</label>
                   {editing.url && (
                     <div className="mb-2">
-                      <img
+                      <Image
                         src={editing.url}
                         alt="Preview"
-                        className="w-32 h-32 object-cover rounded-lg"
+                        width={128}
+                        height={128}
+                        className="object-cover rounded-lg"
                       />
                     </div>
                   )}
@@ -796,10 +799,11 @@ export default function AdminGallery() {
                       <div className="mt-3">
                         <div className="aspect-video w-32 bg-gray-100 rounded-lg flex items-center justify-center relative">
                           {editing.thumbnail || editing.mainImage ? (
-                            <img
-                              src={editing.thumbnail || editing.mainImage}
+                            <Image
+                              src={editing.thumbnail || editing.mainImage || ''}
                               alt="Video preview"
-                              className="w-full h-full object-cover rounded-lg"
+                              fill
+                              className="object-cover rounded-lg"
                             />
                           ) : (
                             <Video className="w-8 h-8 text-gray-400" />
@@ -824,10 +828,12 @@ export default function AdminGallery() {
                     </label>
                     {editing.mainImage && (
                       <div className="mb-2 relative inline-block">
-                        <img
+                        <Image
                           src={editing.mainImage}
                           alt="Main cover"
-                          className="w-32 h-32 object-cover rounded-lg"
+                          width={128}
+                          height={128}
+                          className="object-cover rounded-lg"
                         />
                         <button
                           type="button"
@@ -876,10 +882,12 @@ export default function AdminGallery() {
                       <div className="mb-2 grid grid-cols-4 gap-2">
                         {editing.additionalImages.map((image, index) => (
                           <div key={index} className="relative">
-                            <img
+                            <Image
                               src={image}
                               alt={`Additional ${index + 1}`}
-                              className="w-20 h-20 object-cover rounded-lg"
+                              width={80}
+                              height={80}
+                              className="object-cover rounded-lg"
                             />
                             <button
                               type="button"

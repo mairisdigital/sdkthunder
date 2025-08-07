@@ -12,12 +12,12 @@ import {
   Calendar,
   AlertCircle,
   CheckCircle,
-  SlidersHorizontal,
   Upload,
   Image,
   Trash2,
   Loader2
 } from 'lucide-react';
+import NextImage from 'next/image';
 
 interface HeroSettings {
   title: string;
@@ -84,13 +84,6 @@ export default function AdminHero() {
     fetchHeroData();
   }, []);
 
-  // Imitējam countdown
-  useEffect(() => {
-    updateCountdown();
-    const timer = setInterval(updateCountdown, 1000);
-    return () => clearInterval(timer);
-  }, [data.countdownDate]);
-
   const updateCountdown = () => {
     const targetDate = new Date(data.countdownDate);
     const now = new Date();
@@ -108,6 +101,13 @@ export default function AdminHero() {
 
     setTimeLeft({ days, hours, minutes, seconds });
   };
+
+  // Imitējam countdown
+  useEffect(() => {
+    updateCountdown();
+    const timer = setInterval(updateCountdown, 1000);
+    return () => clearInterval(timer);
+  }, [data.countdownDate, updateCountdown]);
 
   const fetchHeroData = async () => {
     try {
@@ -413,11 +413,14 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'b
                 <div className="flex flex-col sm:flex-row gap-4">
                   <div className="flex-shrink-0 w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 overflow-hidden relative">
                     {data.logoImage ? (
-                      <img 
-                        src={data.logoImage} 
-                        alt="Logo" 
-                        className="w-full h-full object-contain" 
-                      />
+                      <div className="relative w-full h-full">
+                        <NextImage 
+                          src={data.logoImage!}
+                          alt="Logo"
+                          fill
+                          className="object-contain"
+                        />
+                      </div>
                     ) : (
                       <div className="text-gray-400 text-sm text-center p-2">
                         <Image className="w-8 h-8 mx-auto mb-1 opacity-50" />
@@ -489,11 +492,14 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'b
                 <div className="flex flex-col sm:flex-row gap-4">
                   <div className="flex-shrink-0 w-48 h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 overflow-hidden relative">
                     {data.backgroundImage && !data.usePatternBg ? (
-                      <img 
-                        src={data.backgroundImage} 
-                        alt="Fona attēls" 
-                        className="w-full h-full object-cover" 
-                      />
+                      <div className="relative w-full h-full">
+                        <NextImage 
+                          src={data.backgroundImage!}
+                          alt="Fona attēls"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
                     ) : (
                       <div 
                         className="w-full h-full opacity-70"
@@ -730,12 +736,13 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'b
                     </div>
 
                     <div className="flex flex-col items-center mb-4">
-                      <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center mb-4 overflow-hidden">
+                      <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center mb-4 overflow-hidden relative">
                         {data.logoImage ? (
-                          <img
-                            src={data.logoImage}
+                          <NextImage
+                            src={data.logoImage!}
                             alt="Logo"
-                            className="w-full h-full object-contain"
+                            fill
+                            className="object-contain"
                           />
                         ) : (
                           <div className="text-white text-xs font-bold">LOGO</div>

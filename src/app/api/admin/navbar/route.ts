@@ -108,13 +108,18 @@ export async function POST(request: NextRequest) {
 
       // Izveidojam jaunos
       await prisma.navbarMenuItem.createMany({
-        data: menuItems.map((item: any, index: number) => ({
-          name: item.name,
-          href: item.href,
-          order: index + 1,
-          active: item.active || false,
-          visible: item.visible !== false,
-        }))
+        data: menuItems.map(
+          (
+            item: { name: string; href: string; active?: boolean; visible?: boolean },
+            index: number
+          ) => ({
+            name: item.name,
+            href: item.href,
+            order: index + 1,
+            active: item.active || false,
+            visible: item.visible !== false,
+          })
+        )
       });
     }
 

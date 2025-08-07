@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { prisma } from '../../../../lib/prisma';
 
 // GET - Iegūt visus galerijas ierakstus
@@ -8,14 +8,14 @@ export async function GET(req: Request) {
     const category = searchParams.get('category');
     const type = searchParams.get('type');
 
-    const where: any = {};
+    const where: import('@prisma/client').Prisma.GalleryItemWhereInput = {};
 
     if (category && category !== 'all') {
       where.category = category;
     }
 
     if (type) {
-      where.type = type;
+      where.type = type as import('@prisma/client').MediaType;
     }
 
     const items = await prisma.galleryItem.findMany({
@@ -28,7 +28,7 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json(items);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error fetching gallery items:', error);
     return NextResponse.json(
       { error: 'Failed to fetch gallery items' },

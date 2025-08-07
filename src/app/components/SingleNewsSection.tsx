@@ -11,12 +11,12 @@ import {
   ArrowLeft,
   Heart,
   Share2,
-  BookOpen,
   ThumbsUp,
   Send,
   ArrowRight,
   Loader2
 } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 interface NewsArticle {
@@ -275,14 +275,12 @@ const SingleNewsSection: React.FC<{ newsId: string }> = ({ newsId }) => {
               <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl overflow-hidden border border-white/20">
                 
                 <div className="relative h-96 overflow-hidden">
-                  <img
+                  <Image
                     src={article.image || '/placeholder.jpg'}
                     alt={article.title}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = '/placeholder.jpg';
-                    }}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 66vw"
                   />
                   
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
@@ -441,15 +439,13 @@ const SingleNewsSection: React.FC<{ newsId: string }> = ({ newsId }) => {
                         className="block group cursor-pointer border border-gray-200 rounded-xl p-3 hover:border-red-300 hover:bg-red-50 transition-all duration-300"
                       >
                         <div className="flex gap-3">
-                          <div className="w-16 h-16 bg-gradient-to-br from-gray-200 to-gray-300 rounded-lg flex-shrink-0 overflow-hidden">
-                            <img
+                          <div className="relative w-16 h-16 overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300 rounded-lg flex-shrink-0">
+                            <Image
                               src={related.image || '/placeholder-small.jpg'}
                               alt={related.title}
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.src = '/placeholder-small.jpg';
-                              }}
+                              fill
+                              className="object-cover"
+                              sizes="64px"
                             />
                           </div>
                           <div className="flex-1">

@@ -8,7 +8,6 @@ import {
   MapPin,
   Clock,
   Users,
-  Trophy,
   X,
   Ticket,
   Info
@@ -40,7 +39,7 @@ const CalendarSection: React.FC = () => {
       const res = await fetch('/api/calendar');
       const data = await res.json();
 
-      const enriched = data.map((event: any): Event => {
+      const enriched = data.map((event: { id: number; title: string; description?: string; date: string; location?: string }): Event => {
         const dateObj = new Date(event.date);
         const now = new Date();
 

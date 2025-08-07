@@ -75,7 +75,7 @@ export async function PUT(
     return NextResponse.json(value);
   } catch (error) {
     console.error('Error updating value:', error);
-    if (typeof error === 'object' && error !== null && 'code' in error && (error as any).code === 'P2025') {
+    if (typeof error === 'object' && error !== null && 'code' in error && (error as { code?: string }).code === 'P2025') {
       return NextResponse.json(
         { error: 'Value not found' },
         { status: 404 }
@@ -108,7 +108,7 @@ export async function DELETE(
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting value:', error);
-    if (typeof error === 'object' && error !== null && 'code' in error && (error as any).code === 'P2025') {
+    if (typeof error === 'object' && error !== null && 'code' in error && (error as { code?: string }).code === 'P2025') {
       return NextResponse.json(
         { error: 'Value not found' },
         { status: 404 }

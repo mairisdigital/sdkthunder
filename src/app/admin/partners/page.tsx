@@ -1,19 +1,19 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { 
-  Trophy, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Save, 
-  X, 
+import {
+  Trophy,
+  Plus,
+  Edit,
+  Trash2,
+  X,
   Upload,
   Award,
   Medal,
   Shield,
   ExternalLink
 } from 'lucide-react';
+import Image from 'next/image';
 
 // Tipizācija partneru
 interface Partner {
@@ -82,14 +82,6 @@ const PartnersPage: React.FC = () => {
     return <Icon className="w-4 h-4" />;
   };
 
-  const getTierColor = (tier: string) => {
-    const tierData = partnerTiers.find(t => t.value === tier);
-    return tierData?.color || 'from-blue-400 to-blue-600';
-  };
-
-  const formatPartnerType = (type: string) => {
-    return type.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
-  };
 
   const handleAddPartner = () => {
     const newId = Date.now(); // Temporary ID
@@ -344,15 +336,18 @@ const PartnersPage: React.FC = () => {
                     {/* Logo */}
                     <div className="h-20 bg-white rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center mb-3">
                       {partner.logo ? (
-                        <img 
-                          src={partner.logo} 
-                          alt={partner.name} 
-                          className="max-h-16 max-w-full object-contain" 
-                          onError={(e) => {
-                            console.error('❌ Failed to load partner logo:', partner.logo);
-                            e.currentTarget.style.display = 'none';
-                          }}
-                        />
+                        <div className="relative w-full h-20">
+                          <Image
+                            src={partner.logo}
+                            alt={partner.name}
+                            fill
+                            className="object-contain max-h-16"
+                            onError={(e) => {
+                              console.error('❌ Failed to load partner logo:', partner.logo);
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        </div>
                       ) : (
                         <div className="text-gray-400 text-sm text-center">
                           <div>{partner.name}</div>
@@ -473,15 +468,18 @@ const PartnersPage: React.FC = () => {
                 <div className="space-y-3">
                   {editingPartner.logo && (
                     <div className="w-32 h-20 bg-gray-100 rounded-lg border border-gray-300 flex items-center justify-center">
-                      <img 
-                        src={editingPartner.logo} 
-                        alt="Logo preview" 
-                        className="max-h-16 max-w-full object-contain"
-                        onError={(e) => {
-                          console.error('❌ Failed to load logo preview:', editingPartner.logo);
-                          e.currentTarget.style.display = 'none';
-                        }}
-                      />
+                      <div className="relative w-full h-20">
+                        <Image
+                          src={editingPartner.logo}
+                          alt="Logo preview"
+                          fill
+                          className="object-contain max-h-16"
+                          onError={(e) => {
+                            console.error('❌ Failed to load logo preview:', editingPartner.logo);
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+                      </div>
                     </div>
                   )}
                   <div className="flex items-center gap-3">

@@ -2,6 +2,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Handshake, Trophy, Medal, Award, Shield, ExternalLink } from 'lucide-react';
 
 interface Partner {
@@ -156,13 +157,14 @@ const PartnersSection: React.FC = () => {
                 <div className="h-48 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-8 group-hover:from-red-50 group-hover:to-orange-50 transition-all duration-500 relative">
                   {/* 🔧 IZLABOTS: Pareizs attēlu rādīšanas veids */}
                   {partner.logo && (
-                    <img 
-                      src={partner.logo} 
+                    <Image
+                      src={partner.logo}
                       alt={`${partner.name} logo`}
-                      className="max-w-32 max-h-20 object-contain group-hover:scale-110 transition-transform duration-300"
-                      onError={(e) => handleImageError(e, partner)}
-                      onLoad={(e) => handleImageLoad(e, partner)}
-                      style={{ display: 'block' }}
+                      fill
+                      className="object-contain max-w-32 max-h-20 group-hover:scale-110 transition-transform duration-300"
+                      onError={(e) => handleImageError(e as unknown as React.SyntheticEvent<HTMLImageElement, Event>, partner)}
+                      onLoad={(e) => handleImageLoad(e as unknown as React.SyntheticEvent<HTMLImageElement, Event>, partner)}
+                      style={{ objectFit: 'contain' }}
                     />
                   )}
                   

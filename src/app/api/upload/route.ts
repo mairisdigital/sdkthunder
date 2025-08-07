@@ -49,7 +49,6 @@ export async function POST(request: NextRequest) {
 
     // Izveidojam īsāku, tīrāku faila nosaukumu
     const timestamp = Date.now();
-    const fileExtension = file.name.split('.').pop() || 'jpg';
     const cleanFileName = file.name.replace(/[^a-zA-Z0-9]/g, '').substring(0, 20);
     const publicId = `${timestamp}_${cleanFileName}`;
 

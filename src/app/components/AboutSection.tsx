@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { 
   Users, 
   Trophy, 
@@ -224,16 +225,20 @@ const AboutSection: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-br from-red-400/30 to-orange-500/30 rounded-full blur-2xl group-hover:blur-3xl opacity-70 group-hover:opacity-90 transition-all duration-500" />
                 <div className="relative w-full h-full bg-white/10 backdrop-blur-sm rounded-full shadow-2xl flex items-center justify-center border-4 border-white/20 group-hover:scale-105 transition-transform duration-500">
                   {displayContent.logoUrl ? (
-                    <img 
-                      src={displayContent.logoUrl} 
-                      alt="SDK Thunder Logo" 
-                      className="w-64 h-64 object-contain rounded-full filter drop-shadow-2xl"
+                    <Image
+                      src={displayContent.logoUrl}
+                      alt="SDK Thunder Logo"
+                      width={256}
+                      height={256}
+                      className="object-contain rounded-full filter drop-shadow-2xl"
                     />
                   ) : (
-                    <img 
-                      src="/SDKThunderLogo.svg" 
-                      alt="SDK Thunder Logo" 
-                      className="w-64 h-64 object-contain rounded-full filter drop-shadow-2xl"
+                    <Image
+                      src="/SDKThunderLogo.svg"
+                      alt="SDK Thunder Logo"
+                      width={256}
+                      height={256}
+                      className="object-contain rounded-full filter drop-shadow-2xl"
                     />
                   )}
                 </div>

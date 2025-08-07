@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface HeroSettings {
   id: number;
@@ -62,12 +63,30 @@ const HeroSection: React.FC = () => {
     fetchHeroData();
   }, []);
 
+  const updateCountdown = useCallback(() => {
+    const targetDate = new Date(settings.countdownDate);
+    const now = new Date();
+    const difference = targetDate.getTime() - now.getTime();
+
+    if (difference <= 0) {
+      setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      return;
+    }
+
+    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+    setTimeLeft({ days, hours, minutes, seconds });
+  }, [settings.countdownDate]);
+
   // Countdown timer effect
   useEffect(() => {
     updateCountdown();
     const timer = setInterval(updateCountdown, 1000);
     return () => clearInterval(timer);
-  }, [settings.countdownDate]);
+  }, [settings.countdownDate, updateCountdown]);
 
   const fetchHeroData = async () => {
     try {
@@ -89,24 +108,6 @@ const HeroSection: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const updateCountdown = () => {
-    const targetDate = new Date(settings.countdownDate);
-    const now = new Date();
-    const difference = targetDate.getTime() - now.getTime();
-
-    if (difference <= 0) {
-      setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-      return;
-    }
-
-    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-    setTimeLeft({ days, hours, minutes, seconds });
   };
 
   // Image loading handlers
@@ -176,13 +177,15 @@ const HeroSection: React.FC = () => {
 
       {/* Preload background image if exists */}
       {settings.backgroundImage && !settings.usePatternBg && (
-        <img
+        <Image
           src={settings.backgroundImage}
           alt=""
+          width={1}
+          height={1}
           className="hidden"
           onLoad={() => handleImageLoad('background')}
           onError={() => handleImageError('background')}
-          onLoadStart={() => handleImageLoadStart('background')}
+          onLoadingComplete={() => handleImageLoad('background')}
         />
       )}
 
@@ -210,7 +213,7 @@ const HeroSection: React.FC = () => {
         <div className="flex justify-center mb-12">
           <div className="relative group">
             <div className="w-48 h-48 md:w-64 md:h-64 bg-gradient-to-br from-red-600/20 to-red-800/20 backdrop-blur-sm rounded-full p-4 shadow-2xl transform group-hover:scale-105 transition-all duration-500 border-2 border-white/20">
-              <div className="w-full h-full rounded-full overflow-hidden bg-white/10 backdrop-blur-sm flex items-center justify-center relative">
+              <div className="relative w-full h-full rounded-full overflow-hidden bg-white/10 backdrop-blur-sm flex items-center justify-center">
                 
                 {/* Loading spinner for logo */}
                 {imageLoading.logo && (
@@ -221,22 +224,23 @@ const HeroSection: React.FC = () => {
 
                 {/* Logo Image */}
                 {settings.logoImage && !imageErrors.logo ? (
-                  <img 
+                  <Image 
                     src={settings.logoImage}
-                    alt="SDK Thunder Logo" 
-                    className={`w-full h-full object-contain rounded-full filter drop-shadow-lg transition-opacity duration-300 ${
+                    alt="SDK Thunder Logo"
+                    fill
+                    className={`object-contain rounded-full filter drop-shadow-lg transition-opacity duration-300 ${
                       imageLoading.logo ? 'opacity-0' : 'opacity-100'
                     }`}
-                    onLoad={() => handleImageLoad('logo')}
+                    onLoadingComplete={() => handleImageLoad('logo')}
                     onError={() => handleImageError('logo')}
-                    onLoadStart={() => handleImageLoadStart('logo')}
                   />
                 ) : (
                   // Fallback to local logo if Cloudinary fails or no custom logo
-                  <img 
-                    src="/SDKThunderLogo.svg" 
-                    alt="SDK Thunder Logo" 
-                    className="w-full h-full object-contain rounded-full filter drop-shadow-lg"
+                  <Image 
+                    src="/SDKThunderLogo.svg"
+                    alt="SDK Thunder Logo"
+                    fill
+                    className="object-contain rounded-full filter drop-shadow-lg"
                   />
                 )}
               </div>

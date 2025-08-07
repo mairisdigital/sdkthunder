@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import {
   Save,
   Edit3,
   Plus,
   Trash2,
   Upload,
-  Image as ImageIcon,
   Users,
   Trophy,
   Calendar,
@@ -300,7 +300,7 @@ export default function AdminAbout() {
         ].map((tab) => (
           <button
             key={tab.key}
-            onClick={() => setActiveTab(tab.key as any)}
+            onClick={() => setActiveTab(tab.key as 'content' | 'values' | 'stats')}
             className={`px-4 py-2 rounded-md font-medium transition-colors ${
               activeTab === tab.key
                 ? 'bg-white text-red-600 shadow-sm'
@@ -407,10 +407,12 @@ export default function AdminAbout() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Logo</label>
                 {content.logoUrl && (
                   <div className="mb-2">
-                    <img
-                      src={content.logoUrl}
+                    <Image
+                      src={content.logoUrl || ''}
                       alt="Logo"
-                      className="w-32 h-32 object-contain rounded-lg border border-gray-200"
+                      width={128}
+                      height={128}
+                      className="object-contain rounded-lg border border-gray-200"
                     />
                   </div>
                 )}
@@ -435,10 +437,12 @@ export default function AdminAbout() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Fona attēls</label>
                 {content.backgroundImageUrl && (
                   <div className="mb-2">
-                    <img
-                      src={content.backgroundImageUrl}
-                      alt="Background"
-                      className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                    <Image
+                      src={content.backgroundImageUrl || ''}
+                      alt="Logo"
+                      width={128}
+                      height={128}
+                      className="object-contain rounded-lg border border-gray-200"
                     />
                   </div>
                 )}
@@ -491,7 +495,7 @@ export default function AdminAbout() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">"Uzzināt vairāk" pogas teksts</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">&quot;Uzzināt vairāk&quot; pogas teksts</label>
                     <input
                       type="text"
                       value={content.learnMoreButtonText}
@@ -542,7 +546,7 @@ export default function AdminAbout() {
           </div>
 
           <div className="space-y-4">
-            {values.map((value, index) => (
+            {values.map((value) => (
               <div key={value.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                 <div className="flex items-start">
                   <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />

@@ -15,6 +15,7 @@ import {
   Share2,
   BookOpen} from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface NewsArticle {
   id: number;
@@ -266,7 +267,7 @@ const NewsPageSection: React.FC = () => {
 
                 <select
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
+                  onChange={(e) => setSortBy(e.target.value as 'newest' | 'popular' | 'trending')}
                   className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none bg-white/80 backdrop-blur-sm"
                 >
                   <option value="newest">Jaunākie</option>
@@ -314,15 +315,11 @@ const NewsPageSection: React.FC = () => {
                               <Share2 className="w-4 h-4 text-gray-600" />
                             </button>
                           </div>
-
-                          <img
+                          <Image
                             src={article.image || '/placeholder.jpg'}
                             alt={article.title}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.src = '/placeholder.jpg';
-                            }}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-110"
                           />
                         </div>
 
@@ -409,15 +406,11 @@ const NewsPageSection: React.FC = () => {
                               Hot
                             </div>
                           )}
-
-                          <img
+                        <Image
                             src={article.image || '/placeholder.jpg'}
                             alt={article.title}
-                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.src = '/placeholder.jpg';
-                            }}
+                            fill
+                            className="object-cover transition-transform duration-300 group-hover:scale-110"
                           />
                         </div>
 
