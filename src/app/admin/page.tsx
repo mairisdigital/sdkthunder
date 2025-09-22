@@ -92,14 +92,6 @@ export default function AdminDashboard() {
       stats: 'Vēsture, komanda'
     },
     {
-      name: 'Kontakti',
-      description: 'Pārvaldīt kontaktinformāciju un saziņas formu',
-      href: '/admin/contacts',
-      icon: Mail,
-      color: 'from-teal-500 to-teal-600',
-      stats: 'Adrese, tālruņi'
-    },
-    {
       name: 'Partneri',
       description: 'Pārvaldīt sadarbības partnerus un sponsorus',
       href: '/admin/partners',

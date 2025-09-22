@@ -291,7 +291,7 @@ const GallerySection: React.FC = () => {
               }`}
             >
               <Camera className="w-5 h-5 mr-2" />
-              Foto ({photos.length})
+              Albumi ({photos.length})
             </button>
             <button
               onClick={() => setActiveTab('videos')}

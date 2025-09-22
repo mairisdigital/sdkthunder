@@ -208,8 +208,8 @@ const HeroSection: React.FC = () => {
         {/* Logo Section */}
         <div className="flex justify-center mb-12">
           <div className="relative group">
-            <div className="w-48 h-48 md:w-64 md:h-64 bg-gradient-to-br from-red-600/20 to-red-800/20 backdrop-blur-sm rounded-full p-4 shadow-2xl transform group-hover:scale-105 transition-all duration-500 border-2 border-white/20">
-              <div className="relative w-full h-full rounded-full overflow-hidden bg-white/10 backdrop-blur-sm flex items-center justify-center">
+            <div className="w-48 h-48 md:w-64 md:h-64">
+              <div className="relative w-full h-full flex items-center justify-center">
                 
                 {/* Loading spinner for logo */}
                 {imageLoading.logo && (
@@ -224,7 +224,7 @@ const HeroSection: React.FC = () => {
                     src={settings.logoImage}
                     alt="SDK Thunder Logo"
                     fill
-                    className={`object-contain rounded-full filter drop-shadow-lg transition-opacity duration-300 ${
+                    className={`object-contain ${
                       imageLoading.logo ? 'opacity-0' : 'opacity-100'
                     }`}
                     onLoadingComplete={() => handleImageLoad('logo')}
@@ -236,13 +236,11 @@ const HeroSection: React.FC = () => {
                     src="/SDKThunderLogo.svg"
                     alt="SDK Thunder Logo"
                     fill
-                    className="object-contain rounded-full filter drop-shadow-lg"
+                    className="object-contain"
                   />
                 )}
               </div>
             </div>
-
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-red-500/30 to-red-700/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl -z-10" />
           </div>
         </div>
 
@@ -259,11 +257,13 @@ const HeroSection: React.FC = () => {
             </Link>
           </div>
           
-          <div className="flex flex-col items-center">
-            <h2 className="text-4xl md:text-6xl font-bold mb-4 text-shadow-lg italic transform rotate-2">
-              {settings.tagline2}
-            </h2>
-          </div>
+          {settings.tagline2 && (
+            <div className="flex flex-col items-center">
+              <h2 className="text-4xl md:text-6xl font-bold mb-4 text-shadow-lg italic transform rotate-2">
+                {settings.tagline2}
+              </h2>
+            </div>
+          )}
         </div>
 
         {/* Countdown */}

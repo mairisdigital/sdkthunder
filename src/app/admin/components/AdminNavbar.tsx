@@ -34,7 +34,6 @@ const AdminNavbar: React.FC = () => {
     { name: 'Galerija', href: '/admin/gallery', icon: Image },
     { name: 'Vietas', href: '/admin/locations', icon: MapPin },
     { name: 'Par mums', href: '/admin/about', icon: Users },
-    { name: 'Kontakti', href: '/admin/contacts', icon: Mail },
   ];
 
   return (

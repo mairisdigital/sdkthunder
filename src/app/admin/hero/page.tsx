@@ -759,11 +759,13 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'b
                           </button>
                         </div>
                         
-                        <div className="flex flex-col items-center">
-                          <h2 className="text-xl font-bold text-white mb-2 italic transform rotate-2">
-                            {data.tagline2}
-                          </h2>
-                        </div>
+                        {data.tagline2 && (
+                          <div className="flex flex-col items-center">
+                            <h2 className="text-xl font-bold text-white mb-2 italic transform rotate-2">
+                              {data.tagline2}
+                            </h2>
+                          </div>
+                        )}
                       </div>
                     </div>
 

@@ -11,7 +11,9 @@ import {
   Award,
   Medal,
   Shield,
-  ExternalLink
+  ExternalLink,
+  Settings,
+  Save
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -25,6 +27,18 @@ interface Partner {
   website: string | null;
   active: boolean;
   order: number;
+}
+
+// Tipizācija partneru iestatījumiem
+interface PartnersSettings {
+  id: number;
+  title: string;
+  subtitle: string;
+  ctaTitle: string;
+  ctaSubtitle: string;
+  ctaButtonText: string;
+  ctaButtonLink: string;
+  isActive: boolean;
 }
 
 // Partneru tipi un kategorijas
@@ -43,9 +57,24 @@ const PartnersPage: React.FC = () => {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [uploadingLogo, setUploadingLogo] = useState(false);
 
-  // Ielādējam partnerus no API
+  // Partners settings state
+  const [partnersSettings, setPartnersSettings] = useState<PartnersSettings>({
+    id: 0,
+    title: "Mūsu Partneri",
+    subtitle: "Mūsu foršie draugi, atbalstītāji un sadarbības partneri",
+    ctaTitle: "Vēlies kļūt par mūsu partneri?",
+    ctaSubtitle: "Sazinies ar mums un kopā veidosim nākotni!",
+    ctaButtonText: "Sazināties ar mums",
+    ctaButtonLink: "/contact",
+    isActive: true
+  });
+  const [editingSettings, setEditingSettings] = useState(false);
+  const [settingsLoading, setSettingsLoading] = useState(false);
+
+  // Ielādējam partnerus un iestatījumus no API
   useEffect(() => {
     fetchPartners();
+    fetchPartnersSettings();
   }, []);
 
   const fetchPartners = async () => {
@@ -61,6 +90,50 @@ const PartnersPage: React.FC = () => {
       console.error('Kļūda:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchPartnersSettings = async () => {
+    try {
+      const response = await fetch('/api/admin/partners-settings');
+      if (response.ok) {
+        const data = await response.json();
+        setPartnersSettings(data);
+      } else {
+        console.error('Kļūda ielādējot partneru iestatījumus');
+      }
+    } catch (error) {
+      console.error('Kļūda:', error);
+    }
+  };
+
+  const handleSaveSettings = async () => {
+    setSettingsLoading(true);
+
+    try {
+      const response = await fetch('/api/admin/partners-settings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(partnersSettings),
+      });
+
+      if (response.ok) {
+        const updatedSettings = await response.json();
+        setPartnersSettings(updatedSettings);
+        setEditingSettings(false);
+        setSaveStatus('saved');
+        setTimeout(() => setSaveStatus('idle'), 2000);
+      } else {
+        throw new Error('Kļūda saglabājot iestatījumus');
+      }
+    } catch (error) {
+      console.error('Kļūda:', error);
+      setSaveStatus('error');
+      setTimeout(() => setSaveStatus('idle'), 3000);
+    } finally {
+      setSettingsLoading(false);
     }
   };
 
@@ -255,13 +328,22 @@ const PartnersPage: React.FC = () => {
           </div>
         </div>
         
-        <button
-          onClick={handleAddPartner}
-          className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium transition-all"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Pievienot partneri
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setEditingSettings(true)}
+            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-all"
+          >
+            <Settings className="w-4 h-4 mr-2" />
+            CTA iestatījumi
+          </button>
+          <button
+            onClick={handleAddPartner}
+            className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium transition-all"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Pievienot partneri
+          </button>
+        </div>
       </div>
 
       {/* Status ziņojumi */}
@@ -547,6 +629,153 @@ const PartnersPage: React.FC = () => {
                     ? 'Pievienot' 
                     : 'Saglabāt'
                 }
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Settings Modal */}
+      {editingSettings && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold text-gray-900">
+                  Partneru sadaļas iestatījumi
+                </h2>
+                <button
+                  onClick={() => setEditingSettings(false)}
+                  className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6 space-y-4">
+              {/* Galvenais virsraksts */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Galvenais virsraksts
+                </label>
+                <input
+                  type="text"
+                  value={partnersSettings.title}
+                  onChange={(e) => setPartnersSettings({...partnersSettings, title: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                  placeholder="Mūsu Partneri"
+                />
+              </div>
+
+              {/* Apraksts */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Apraksts
+                </label>
+                <input
+                  type="text"
+                  value={partnersSettings.subtitle}
+                  onChange={(e) => setPartnersSettings({...partnersSettings, subtitle: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                  placeholder="Mūsu foršie draugi, atbalstītāji un sadarbības partneri"
+                />
+              </div>
+
+              {/* CTA virsraksts */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  CTA virsraksts
+                </label>
+                <input
+                  type="text"
+                  value={partnersSettings.ctaTitle}
+                  onChange={(e) => setPartnersSettings({...partnersSettings, ctaTitle: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                  placeholder="Vēlies kļūt par mūsu partneri?"
+                />
+              </div>
+
+              {/* CTA apraksts */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  CTA apraksts
+                </label>
+                <input
+                  type="text"
+                  value={partnersSettings.ctaSubtitle}
+                  onChange={(e) => setPartnersSettings({...partnersSettings, ctaSubtitle: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                  placeholder="Sazinies ar mums un kopā veidosim nākotni!"
+                />
+              </div>
+
+              {/* CTA pogas teksts */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  CTA pogas teksts
+                </label>
+                <input
+                  type="text"
+                  value={partnersSettings.ctaButtonText}
+                  onChange={(e) => setPartnersSettings({...partnersSettings, ctaButtonText: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                  placeholder="Sazināties ar mums"
+                />
+              </div>
+
+              {/* CTA pogas saite */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  CTA pogas saite
+                </label>
+                <input
+                  type="text"
+                  value={partnersSettings.ctaButtonLink}
+                  onChange={(e) => setPartnersSettings({...partnersSettings, ctaButtonLink: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                  placeholder="/contact"
+                />
+              </div>
+
+              {/* Aktīvs */}
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="cta-active"
+                  checked={partnersSettings.isActive}
+                  onChange={(e) => setPartnersSettings({...partnersSettings, isActive: e.target.checked})}
+                  className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+                />
+                <label htmlFor="cta-active" className="ml-2 block text-sm text-gray-700">
+                  Rādīt CTA sadaļu
+                </label>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-200 flex items-center justify-end gap-3">
+              <button
+                onClick={() => setEditingSettings(false)}
+                className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors"
+              >
+                Atcelt
+              </button>
+              <button
+                onClick={handleSaveSettings}
+                disabled={settingsLoading}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed font-medium transition-colors flex items-center"
+              >
+                {settingsLoading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                    Saglabā...
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4 mr-2" />
+                    Saglabāt
+                  </>
+                )}
               </button>
             </div>
           </div>

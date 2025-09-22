@@ -1,4 +1,3 @@
-// src/app/components/PartnersSection.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -16,31 +15,61 @@ interface Partner {
   order: number;
 }
 
+interface PartnersSettings {
+  id: number;
+  title: string;
+  subtitle: string;
+  ctaTitle: string;
+  ctaSubtitle: string;
+  ctaButtonText: string;
+  ctaButtonLink: string;
+  isActive: boolean;
+}
+
 const PartnersSection: React.FC = () => {
   const [partners, setPartners] = useState<Partner[]>([]);
+  const [settings, setSettings] = useState<PartnersSettings>({
+    id: 0,
+    title: "Mūsu Partneri",
+    subtitle: "Mūsu foršie draugi, atbalstītāji un sadarbības partneri",
+    ctaTitle: "Vēlies kļūt par mūsu partneri?",
+    ctaSubtitle: "Sazinies ar mums un kopā veidosim nākotni!",
+    ctaButtonText: "Sazināties ar mums",
+    ctaButtonLink: "/contact",
+    isActive: true
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Ielādējam partnerus no API
+  // Ielādējam partnerus un iestatījumus no API
   useEffect(() => {
-    const fetchPartners = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch('/api/partners');
-        if (!response.ok) {
+        // Ielādējam partnerus
+        const partnersResponse = await fetch('/api/partners');
+        if (!partnersResponse.ok) {
           throw new Error('Kļūda ielādējot partnerus');
         }
-        const data = await response.json();
-        console.log('✅ Loaded partners:', data); // Debug log
-        setPartners(data);
+        const partnersData = await partnersResponse.json();
+        console.log('✅ Loaded partners:', partnersData);
+        setPartners(partnersData);
+
+        // Ielādējam iestatījumus
+        const settingsResponse = await fetch('/api/admin/partners-settings');
+        if (settingsResponse.ok) {
+          const settingsData = await settingsResponse.json();
+          console.log('✅ Loaded partners settings:', settingsData);
+          setSettings(settingsData);
+        }
       } catch (err) {
-        console.error('❌ Error loading partners:', err);
-        setError('Neizdevās ielādēt partnerus');
+        console.error('❌ Error loading data:', err);
+        setError('Neizdevās ielādēt datus');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPartners();
+    fetchData();
   }, []);
 
   const getTierIcon = (tier: string) => {
@@ -130,15 +159,15 @@ const PartnersSection: React.FC = () => {
           <div className="flex items-center justify-center mb-6">
             <Handshake className="w-12 h-12 text-red-600 mr-4" />
             <h2 className="text-4xl md:text-5xl font-bold">
-              <span className="text-slate-800">Mūsu </span>
+              <span className="text-slate-800">{settings.title.split(' ').slice(0, -1).join(' ')} </span>
               <span className="text-red-600 relative">
-                Partneri
+                {settings.title.split(' ').slice(-1)[0]}
                 <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-red-500 to-orange-500 rounded-full" />
               </span>
             </h2>
           </div>
           <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-            Mūsu foršie draugi, atbalstītāji un sadarbības partneri
+            {settings.subtitle}
           </p>
         </div>
 
@@ -154,37 +183,33 @@ const PartnersSection: React.FC = () => {
                   {partner.tier.toUpperCase()}
                 </div>
                 
-                <div className="h-48 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-8 group-hover:from-red-50 group-hover:to-orange-50 transition-all duration-500 relative">
-                  {/* 🔧 IZLABOTS: Pareizs attēlu rādīšanas veids */}
-                  {partner.logo && (
-                    <Image
-                      src={partner.logo}
-                      alt={`${partner.name} logo`}
-                      fill
-                      className="object-contain max-w-32 max-h-20 group-hover:scale-110 transition-transform duration-300"
-                      onError={(e) => handleImageError(e as unknown as React.SyntheticEvent<HTMLImageElement, Event>, partner)}
-                      onLoad={(e) => handleImageLoad(e as unknown as React.SyntheticEvent<HTMLImageElement, Event>, partner)}
-                      style={{ objectFit: 'contain' }}
-                    />
-                  )}
-                  
-                  {/* Fallback logo container - vienmēr eksistē */}
-                  <div 
-                    className={`fallback-logo w-32 h-20 bg-gray-200 rounded-lg flex items-center justify-center shadow-inner group-hover:shadow-lg transition-shadow duration-300 absolute inset-0 m-auto ${
-                      partner.logo ? 'hidden' : 'flex'
-                    }`}
-                    style={{ display: partner.logo ? 'none' : 'flex' }}
-                  >
-                    <div className="text-gray-500 text-sm font-medium text-center">
-                      {partner.name}<br />LOGO
+                <div className="h-32 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4 group-hover:from-red-50 group-hover:to-orange-50 transition-all duration-500 relative">
+                  {/* Logo attēls */}
+                  {partner.logo ? (
+                    <div className="relative w-full h-full flex items-center justify-center">
+                      <Image
+                        src={partner.logo}
+                        alt={`${partner.name} logo`}
+                        width={120}
+                        height={80}
+                        className="object-contain max-w-full max-h-full group-hover:scale-110 transition-transform duration-300"
+                        onError={(e) => handleImageError(e as unknown as React.SyntheticEvent<HTMLImageElement, Event>, partner)}
+                        onLoad={(e) => handleImageLoad(e as unknown as React.SyntheticEvent<HTMLImageElement, Event>, partner)}
+                      />
                     </div>
-                  </div>
+                  ) : (
+                    <div className="fallback-logo w-24 h-16 bg-gray-200 rounded-lg flex items-center justify-center shadow-inner group-hover:shadow-lg transition-shadow duration-300">
+                      <div className="text-gray-500 text-xs font-medium text-center px-2">
+                        {partner.name.split(' ').slice(0, 2).join(' ')}<br />LOGO
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              <div className="p-6">
-                <div className="mb-3">
-                  <h3 className="text-xl font-bold text-slate-800 group-hover:text-red-600 transition-colors duration-300 flex items-center gap-2">
+              <div className="p-4">
+                <div className="mb-2">
+                  <h3 className="text-lg font-bold text-slate-800 group-hover:text-red-600 transition-colors duration-300 flex items-center gap-2">
                     {partner.name}
                     {partner.website && (
                       <a
@@ -206,35 +231,40 @@ const PartnersSection: React.FC = () => {
                   </p>
                 )}
 
-                <div className="mt-4 h-1 bg-gradient-to-r from-red-500 to-orange-500 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+                <div className="mt-3 h-1 bg-gradient-to-r from-red-500 to-orange-500 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
               </div>
             </div>
           ))}
         </div>
 
         {/* CTA sadaļa */}
-        <div className="bg-gradient-to-r from-red-600 to-red-700 rounded-3xl p-12 text-center text-white relative overflow-hidden">
-          <div className="absolute inset-0 opacity-10">
-            <div 
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M20 20c0 11.046-8.954 20-20 20v-40c11.046 0 20 8.954 20 20zM0 20v20h40V0H20c0 11.046-8.954 20-20 20z'/%3E%3C/g%3E%3C/svg%3E")`
-              }}
-              className="w-full h-full"
-            />
+        {settings.isActive && (
+          <div className="bg-gradient-to-r from-red-600 to-red-700 rounded-3xl p-12 text-center text-white relative overflow-hidden">
+            <div className="absolute inset-0 opacity-10">
+              <div
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M20 20c0 11.046-8.954 20-20 20v-40c11.046 0 20 8.954 20 20zM0 20v20h40V0H20c0 11.046-8.954 20-20 20z'/%3E%3C/g%3E%3C/svg%3E")`
+                }}
+                className="w-full h-full"
+              />
+            </div>
+
+            <div className="relative z-10">
+              <h3 className="text-3xl md:text-4xl font-bold mb-4">
+                {settings.ctaTitle}
+              </h3>
+              <p className="text-xl mb-8 opacity-90">
+                {settings.ctaSubtitle}
+              </p>
+              <a
+                href={settings.ctaButtonLink}
+                className="inline-block bg-white text-red-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
+                {settings.ctaButtonText}
+              </a>
+            </div>
           </div>
-          
-          <div className="relative z-10">
-            <h3 className="text-3xl md:text-4xl font-bold mb-4">
-              Vēlies kļūt par mūsu partneri?
-            </h3>
-            <p className="text-xl mb-8 opacity-90">
-              Sazinies ar mums un kopā veidosim nākotni!
-            </p>
-            <button className="bg-white text-red-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
-              Sazināties ar mums
-            </button>
-          </div>
-        </div>
+        )}
       </div>
     </section>
   );
