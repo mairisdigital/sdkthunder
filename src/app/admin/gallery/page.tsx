@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
+import ProtectedLayout from '../components/ProtectedLayout';
 import {
   Image as ImageIcon,
   Video,
@@ -387,7 +388,8 @@ export default function AdminGallery() {
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <ProtectedLayout>
+      <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <div>
@@ -1056,5 +1058,6 @@ export default function AdminGallery() {
         </div>
       )}
     </div>
+    </ProtectedLayout>
   );
 }

@@ -1,5 +1,6 @@
 // src/app/admin/page.tsx
 import React from 'react';
+import ProtectedLayout from './components/ProtectedLayout';
 import { 
   Settings, 
   Newspaper, 
@@ -118,7 +119,8 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div>
+    <ProtectedLayout>
+      <div>
       <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Panelis</h1>
       <p className="text-gray-600 mb-8">Pārvaldiet savu mājas lapu un saturu</p>
       
@@ -161,5 +163,6 @@ export default function AdminDashboard() {
         ))}
       </div>
     </div>
+    </ProtectedLayout>
   );
 }

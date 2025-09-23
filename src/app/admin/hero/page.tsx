@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import ProtectedLayout from '../components/ProtectedLayout';
 import { 
   Save, 
   Eye, 
@@ -296,7 +297,8 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'b
   }
 
   return (
-    <div className="space-y-8">
+    <ProtectedLayout>
+      <div className="space-y-8">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
@@ -859,5 +861,6 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'b
         )}
       </div>
     </div>
+    </ProtectedLayout>
   );
 }

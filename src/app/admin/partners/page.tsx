@@ -16,6 +16,7 @@ import {
   Save
 } from 'lucide-react';
 import Image from 'next/image';
+import ProtectedLayout from '../components/ProtectedLayout';
 
 // Tipizācija partneru
 interface Partner {
@@ -317,6 +318,7 @@ const PartnersPage: React.FC = () => {
   }
 
   return (
+    <ProtectedLayout>
     <div className="space-y-6">
       {/* Galvene */}
       <div className="flex items-center justify-between">
@@ -782,6 +784,7 @@ const PartnersPage: React.FC = () => {
         </div>
       )}
     </div>
+    </ProtectedLayout>
   );
 };
 

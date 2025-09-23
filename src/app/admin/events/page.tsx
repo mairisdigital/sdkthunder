@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import ProtectedLayout from '../components/ProtectedLayout';
 import { 
   Save, 
   Eye, 
@@ -215,7 +216,8 @@ export default function AdminEvents() {
   }
 
   return (
-    <div className="space-y-8">
+    <ProtectedLayout>
+      <div className="space-y-8">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
@@ -819,5 +821,6 @@ export default function AdminEvents() {
         )}
       </div>
     </div>
+    </ProtectedLayout>
   );
 }

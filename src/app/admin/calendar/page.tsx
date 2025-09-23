@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import ProtectedLayout from '../components/ProtectedLayout';
 import {
   Calendar as CalendarIcon,
   Save,
@@ -173,7 +174,8 @@ export default function AdminCalendar() {
   }
 
   return (
-    <div className="space-y-8">
+    <ProtectedLayout>
+      <div className="space-y-8">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
@@ -244,7 +246,7 @@ export default function AdminCalendar() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                    <label className="text-sm font-medium text-gray-700 mb-2 flex items-center">
                       <CalendarIcon className="w-4 h-4 mr-1 text-red-500" />
                       Datums *
                     </label>
@@ -257,7 +259,7 @@ export default function AdminCalendar() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                    <label className="text-sm font-medium text-gray-700 mb-2 flex items-center">
                       <Clock className="w-4 h-4 mr-1 text-red-500" />
                       Laiks *
                     </label>
@@ -276,7 +278,7 @@ export default function AdminCalendar() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                  <label className="text-sm font-medium text-gray-700 mb-2 flex items-center">
                     <MapPin className="w-4 h-4 mr-1 text-red-500" />
                     Vieta
                   </label>
@@ -290,7 +292,7 @@ export default function AdminCalendar() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                  <label className="text-sm font-medium text-gray-700 mb-2 flex items-center">
                     <FileText className="w-4 h-4 mr-1 text-red-500" />
                     Apraksts
                   </label>
@@ -457,5 +459,6 @@ export default function AdminCalendar() {
         )}
       </div>
     </div>
+    </ProtectedLayout>
   );
 }

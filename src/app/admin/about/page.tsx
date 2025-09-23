@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import ProtectedLayout from '../components/ProtectedLayout';
 import {
   Save,
   Edit3,
@@ -269,6 +270,7 @@ export default function AdminAbout() {
   }
 
   return (
+     <ProtectedLayout>
     <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="mb-8">
@@ -764,5 +766,6 @@ export default function AdminAbout() {
         </div>
       )}
     </div>
+    </ProtectedLayout>
   );
 }

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "SDKThunder - Admin Panel",
-  description: "Admin panelis SDKThunder mājas lapas pārvaldīšanai",
+  title: "SDKThunder - Admin Login",
+  description: "Pierakstīšanās admin panelī",
 };
 
-export default function AdminLayout({
+export default function LoginLayout({
   children,
 }: {
   children: React.ReactNode;

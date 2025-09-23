@@ -3,10 +3,11 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { 
-  Settings, 
-  Home, 
-  Users, 
+import { signOut } from 'next-auth/react';
+import {
+  Settings,
+  Home,
+  Users,
   Calendar,
   Image,
   MapPin,
@@ -16,7 +17,8 @@ import {
   ArrowLeft,
   Menu,
   Layout,
-  Zap  // Jauna ikona Events sadaļai
+  Zap,  // Jauna ikona Events sadaļai
+  LogOut
 } from 'lucide-react';
 
 const AdminNavbar: React.FC = () => {
@@ -73,6 +75,15 @@ const AdminNavbar: React.FC = () => {
               );
             })}
           </div>
+
+          {/* Logout poga */}
+          <button
+            onClick={() => signOut({ callbackUrl: '/admin/login' })}
+            className="flex items-center px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg font-medium transition-all duration-300 hover:scale-105"
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            Iziet
+          </button>
 
           {/* Back to Site */}
           <Link

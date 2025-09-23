@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
+import ProtectedLayout from '../components/ProtectedLayout';
 import { 
   Plus,
   Edit3,
@@ -271,7 +272,8 @@ const AdminNewsPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <ProtectedLayout>
+      <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -455,6 +457,7 @@ const AdminNewsPage: React.FC = () => {
         </div>
       )}
     </div>
+    </ProtectedLayout>
   );
 };
 
