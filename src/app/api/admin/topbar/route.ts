@@ -52,10 +52,10 @@ export async function POST(request: NextRequest) {
       settings = await prisma.topBarSettings.update({
         where: { id: existingSettings.id },
         data: {
-          email: email !== undefined ? email : null,
-          emailLabel: emailLabel !== undefined ? emailLabel : null,
-          location: location !== undefined ? location : null,
-          locationLabel: locationLabel !== undefined ? locationLabel : null,
+          email: email !== undefined ? email : undefined,
+          emailLabel: emailLabel !== undefined ? emailLabel : undefined,
+          location: location !== undefined ? location : undefined,
+          locationLabel: locationLabel !== undefined ? locationLabel : undefined,
           facebook: facebook || null,
           instagram: instagram || null,
           youtube: youtube || null,
@@ -65,10 +65,10 @@ export async function POST(request: NextRequest) {
       // Izveidojam jaunus
       settings = await prisma.topBarSettings.create({
         data: {
-          email: email !== undefined ? email : null,
-          emailLabel: emailLabel !== undefined ? emailLabel : null,
-          location: location !== undefined ? location : null,
-          locationLabel: locationLabel !== undefined ? locationLabel : null,
+          email: email !== undefined ? email : undefined,
+          emailLabel: emailLabel !== undefined ? emailLabel : undefined,
+          location: location !== undefined ? location : undefined,
+          locationLabel: locationLabel !== undefined ? locationLabel : undefined,
           facebook: facebook || null,
           instagram: instagram || null,
           youtube: youtube || null,

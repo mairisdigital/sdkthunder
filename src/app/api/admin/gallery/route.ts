@@ -50,10 +50,10 @@ export async function POST(req: Request) {
         type: body.type !== undefined ? body.type : 'PHOTO',
         url: body.url,
         thumbnail: body.thumbnail,
-        category: body.category !== undefined ? body.category : null,
+        category: body.category !== undefined ? body.category : undefined,
         tags: body.tags !== undefined ? body.tags : [],
         description: body.description,
-        author: body.author !== undefined ? body.author : null,
+        author: body.author !== undefined ? body.author : undefined,
         featured: body.featured !== undefined ? body.featured : false,
         order: body.order !== undefined ? body.order : 0,
         duration: body.duration

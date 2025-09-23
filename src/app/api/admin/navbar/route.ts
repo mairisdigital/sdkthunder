@@ -82,16 +82,16 @@ export async function POST(request: NextRequest) {
       settings = await prisma.navbarSettings.update({
         where: { id: existingSettings.id },
         data: {
-          logoText: logoText !== undefined ? logoText : null,
-          logoSubtext: logoSubtext !== undefined ? logoSubtext : null,
+          logoText: logoText !== undefined ? logoText : undefined,
+          logoSubtext: logoSubtext !== undefined ? logoSubtext : undefined,
           logoImage: logoImage !== undefined ? logoImage : existingSettings.logoImage,
         }
       });
     } else {
       settings = await prisma.navbarSettings.create({
         data: {
-          logoText: logoText !== undefined ? logoText : null,
-          logoSubtext: logoSubtext !== undefined ? logoSubtext : null,
+          logoText: logoText !== undefined ? logoText : undefined,
+          logoSubtext: logoSubtext !== undefined ? logoSubtext : undefined,
           logoImage,
         }
       });

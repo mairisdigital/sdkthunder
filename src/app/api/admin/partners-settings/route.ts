@@ -12,12 +12,12 @@ export async function GET() {
     if (!settings) {
       settings = await prisma.partnersSettings.create({
         data: {
-          title: null,
-          subtitle: null,
-          ctaTitle: null,
-          ctaSubtitle: null,
-          ctaButtonText: null,
-          ctaButtonLink: null,
+          title: undefined,
+          subtitle: undefined,
+          ctaTitle: undefined,
+          ctaSubtitle: undefined,
+          ctaButtonText: undefined,
+          ctaButtonLink: undefined,
           isActive: false
         }
       });
@@ -60,12 +60,12 @@ export async function POST(request: NextRequest) {
       settings = await prisma.partnersSettings.update({
         where: { id: existingSettings.id },
         data: {
-          title: title !== undefined ? title : null,
-          subtitle: subtitle !== undefined ? subtitle : null,
-          ctaTitle: ctaTitle !== undefined ? ctaTitle : null,
-          ctaSubtitle: ctaSubtitle !== undefined ? ctaSubtitle : null,
-          ctaButtonText: ctaButtonText !== undefined ? ctaButtonText : null,
-          ctaButtonLink: ctaButtonLink !== undefined ? ctaButtonLink : null,
+          title: title !== undefined ? title : undefined,
+          subtitle: subtitle !== undefined ? subtitle : undefined,
+          ctaTitle: ctaTitle !== undefined ? ctaTitle : undefined,
+          ctaSubtitle: ctaSubtitle !== undefined ? ctaSubtitle : undefined,
+          ctaButtonText: ctaButtonText !== undefined ? ctaButtonText : undefined,
+          ctaButtonLink: ctaButtonLink !== undefined ? ctaButtonLink : undefined,
           isActive: isActive !== undefined ? isActive : existingSettings.isActive
         }
       });
@@ -73,12 +73,12 @@ export async function POST(request: NextRequest) {
       // Izveidojam jaunus
       settings = await prisma.partnersSettings.create({
         data: {
-          title: title !== undefined ? title : null,
-          subtitle: subtitle !== undefined ? subtitle : null,
-          ctaTitle: ctaTitle !== undefined ? ctaTitle : null,
-          ctaSubtitle: ctaSubtitle !== undefined ? ctaSubtitle : null,
-          ctaButtonText: ctaButtonText !== undefined ? ctaButtonText : null,
-          ctaButtonLink: ctaButtonLink !== undefined ? ctaButtonLink : null,
+          title: title !== undefined ? title : undefined,
+          subtitle: subtitle !== undefined ? subtitle : undefined,
+          ctaTitle: ctaTitle !== undefined ? ctaTitle : undefined,
+          ctaSubtitle: ctaSubtitle !== undefined ? ctaSubtitle : undefined,
+          ctaButtonText: ctaButtonText !== undefined ? ctaButtonText : undefined,
+          ctaButtonLink: ctaButtonLink !== undefined ? ctaButtonLink : undefined,
           isActive: isActive !== undefined ? isActive : false
         }
       });

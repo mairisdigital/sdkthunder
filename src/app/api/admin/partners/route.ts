@@ -41,9 +41,9 @@ export async function POST(request: NextRequest) {
       data: {
         name,
         tier,
-        description: description !== undefined ? description : null,
-        logo: logo !== undefined ? logo : null,
-        website: website !== undefined ? website : null,
+        description: description !== undefined ? description : undefined,
+        logo: logo !== undefined ? logo : undefined,
+        website: website !== undefined ? website : undefined,
         active: active !== undefined ? active : true,
         order: order !== undefined ? order : 0
       }

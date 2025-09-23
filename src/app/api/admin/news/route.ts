@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
         trending: data.trending,
         readTime: data.readTime,
         // views/comments/likes atļausim pēc noklusējuma 0
-        publishedAt: data.published ? new Date(data.publishedAt) : null
+        publishedAt: data.published ? new Date(data.publishedAt) : undefined
       }
     });
     return NextResponse.json(created, { status: 201 });
