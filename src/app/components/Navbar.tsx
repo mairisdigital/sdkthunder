@@ -3,10 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 
 interface NavbarSettings {
   logoText: string;
   logoSubtext: string;
+  logoImage: string | null;
 }
 
 interface MenuItem {
@@ -31,7 +33,8 @@ const Navbar: React.FC = () => {
   const [data, setData] = useState<NavbarData>({
     settings: {
       logoText: 'SDK',
-      logoSubtext: 'THUNDER'
+      logoSubtext: 'THUNDER',
+      logoImage: null
     },
     menuItems: [
       { id: 1, name: 'SĀKUMS', href: '/', order: 1, active: true, visible: true },
@@ -105,11 +108,21 @@ const Navbar: React.FC = () => {
           {/* Logo */}
           <div className="flex-shrink-0">
             <div className="flex items-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-red-600 to-red-800 rounded-lg flex items-center justify-center shadow-lg">
-                <div className="text-white font-bold text-xs text-center leading-tight">
-                  <div>{data.settings.logoText}</div>
-                  <div className="text-[10px]">{data.settings.logoSubtext}</div>
-                </div>
+              <div className="w-22 h-22 flex items-center justify-center shadow-lg overflow-hidden">
+                {data.settings.logoImage ? (
+                  <Image
+                    src={data.settings.logoImage}
+                    alt="Logo"
+                    width={64}
+                    height={64}
+                    className="object-contain w-full h-full"
+                  />
+                ) : (
+                  <div className="text-white font-bold text-xs text-center leading-tight">
+                    <div>{data.settings.logoText}</div>
+                    <div className="text-[10px]">{data.settings.logoSubtext}</div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

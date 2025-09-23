@@ -30,6 +30,8 @@ interface HeroSettings {
   countdownTitle: string;
   countdownSubtitle: string;
   countdownDate: string; // ISO string format
+  countdownStartDate: string; // ISO string format
+  countdownDateLabel: string;
   backgroundOverlay: string;
   backgroundImage: string | null;
   logoImage: string | null;
@@ -48,6 +50,8 @@ export default function AdminHero() {
     countdownTitle: "FIBA EuroBasket",
     countdownSubtitle: "2025",
     countdownDate: new Date("2025-08-27T00:00:00Z").toISOString(),
+    countdownStartDate: new Date("2025-08-20T00:00:00Z").toISOString(),
+    countdownDateLabel: "Datumi:",
     backgroundOverlay: "#7c2d12",
     backgroundImage: null,
     logoImage: null,
@@ -116,7 +120,8 @@ export default function AdminHero() {
         const heroData = await response.json();
         setData({
           ...heroData,
-          countdownDate: new Date(heroData.countdownDate).toISOString().split('T')[0]
+          countdownDate: new Date(heroData.countdownDate).toISOString().split('T')[0],
+          countdownStartDate: new Date(heroData.countdownStartDate).toISOString().split('T')[0]
         });
       }
     } catch (error) {
@@ -145,7 +150,8 @@ export default function AdminHero() {
         },
         body: JSON.stringify({
           ...data,
-          countdownDate: new Date(data.countdownDate).toISOString()
+          countdownDate: new Date(data.countdownDate).toISOString(),
+          countdownStartDate: new Date(data.countdownStartDate).toISOString()
         }),
       });
 
@@ -233,7 +239,8 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'b
       },
       body: JSON.stringify({
         ...updatedData,
-        countdownDate: new Date(updatedData.countdownDate).toISOString()
+        countdownDate: new Date(updatedData.countdownDate).toISOString(),
+        countdownStartDate: new Date(updatedData.countdownStartDate).toISOString()
       }),
     });
 
@@ -645,16 +652,43 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'b
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                  <Calendar className="w-4 h-4 mr-2 text-red-500" />
-                  Beigu datums
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Datumu bloka virsraksts
                 </label>
                 <input
-                  type="date"
-                  value={data.countdownDate}
-                  onChange={(e) => handleInputChange('countdownDate', e.target.value)}
+                  type="text"
+                  value={data.countdownDateLabel}
+                  onChange={(e) => handleInputChange('countdownDateLabel', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  placeholder="Datumi:"
                 />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                    <Calendar className="w-4 h-4 mr-2 text-green-500" />
+                    Sākuma datums
+                  </label>
+                  <input
+                    type="date"
+                    value={data.countdownStartDate}
+                    onChange={(e) => handleInputChange('countdownStartDate', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                    <Calendar className="w-4 h-4 mr-2 text-red-500" />
+                    Beigu datums
+                  </label>
+                  <input
+                    type="date"
+                    value={data.countdownDate}
+                    onChange={(e) => handleInputChange('countdownDate', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -775,6 +809,22 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'b
                           {data.countdownTitle}
                         </h3>
                         <p className="text-sm text-gray-600">{data.countdownSubtitle}</p>
+                        {data.countdownStartDate && data.countdownDate && (
+                          <div className="mt-2 p-2 bg-gray-100 rounded">
+                            <p className="text-xs text-gray-500">{data.countdownDateLabel}</p>
+                            <p className="text-sm font-semibold text-gray-800">
+                              {new Date(data.countdownStartDate).toLocaleDateString('lv-LV', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric'
+                              })} - {new Date(data.countdownDate).toLocaleDateString('lv-LV', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric'
+                              })}
+                            </p>
+                          </div>
+                        )}
                       </div>
                       
                       <div className="grid grid-cols-4 gap-2">

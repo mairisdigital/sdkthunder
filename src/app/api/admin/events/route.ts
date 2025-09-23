@@ -48,7 +48,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { 
+    const {
       title,
       subtitle,
       eventTitle,
@@ -56,6 +56,8 @@ export async function POST(request: NextRequest) {
       eventDescription,
       eventLocation,
       eventDates,
+      eventStartDate,
+      eventEndDate,
       eventYear,
       eventType,
       eventTeams,
@@ -63,6 +65,8 @@ export async function POST(request: NextRequest) {
       buttonLink,
       logoImage,
       backgroundGradient,
+      customColorFrom,
+      customColorTo,
       showAdditionalText,
       additionalText,
       additionalButtonText,
@@ -88,48 +92,56 @@ export async function POST(request: NextRequest) {
       settings = await prisma.eventsSettings.update({
         where: { id: existingSettings.id },
         data: {
-          title,
-          subtitle: subtitle || "pasākumi",
-          eventTitle,
-          eventSubtitle: eventSubtitle || "",
-          eventDescription: eventDescription || "",
-          eventLocation: eventLocation || "Rīga, Latvija",
-          eventDates: eventDates || "27/08 - 14/09",
-          eventYear: eventYear || "2025",
-          eventType: eventType || "Čempionāts",
-          eventTeams: eventTeams || "24 komandas",
-          buttonText: buttonText || "PILNS KALENDĀRS",
-          buttonLink: buttonLink || "/calendar",
+          title: title !== undefined ? title : null,
+          subtitle: subtitle !== undefined ? subtitle : null,
+          eventTitle: eventTitle !== undefined ? eventTitle : null,
+          eventSubtitle: eventSubtitle !== undefined ? eventSubtitle : null,
+          eventDescription: eventDescription !== undefined ? eventDescription : null,
+          eventLocation: eventLocation !== undefined ? eventLocation : null,
+          eventDates: eventDates !== undefined ? eventDates : null,
+          eventStartDate: eventStartDate ? new Date(eventStartDate) : existingSettings.eventStartDate,
+          eventEndDate: eventEndDate ? new Date(eventEndDate) : existingSettings.eventEndDate,
+          eventYear: eventYear !== undefined ? eventYear : null,
+          eventType: eventType !== undefined ? eventType : null,
+          eventTeams: eventTeams !== undefined ? eventTeams : null,
+          buttonText: buttonText !== undefined ? buttonText : null,
+          buttonLink: buttonLink !== undefined ? buttonLink : null,
           logoImage: logoImage,
-          backgroundGradient: backgroundGradient || "from-red-600 to-red-700",
-          showAdditionalText: showAdditionalText !== undefined ? showAdditionalText : true,
-          additionalText: additionalText || "Vairāk sporta pasākumu un spēļu skatīties kalendārā",
-          additionalButtonText: additionalButtonText || "Skatīt visus pasākumus",
-          additionalButtonLink: additionalButtonLink || "/calendar"
+          backgroundGradient: backgroundGradient !== undefined ? backgroundGradient : existingSettings.backgroundGradient,
+          customColorFrom: customColorFrom !== undefined ? customColorFrom : existingSettings.customColorFrom,
+          customColorTo: customColorTo !== undefined ? customColorTo : existingSettings.customColorTo,
+          showAdditionalText: showAdditionalText !== undefined ? showAdditionalText : existingSettings.showAdditionalText,
+          additionalText: additionalText !== undefined ? additionalText : null,
+          additionalButtonText: additionalButtonText !== undefined ? additionalButtonText : null,
+          additionalButtonLink: additionalButtonLink !== undefined ? additionalButtonLink : null
         }
       });
     } else {
       // Izveidojam jaunus
       settings = await prisma.eventsSettings.create({
         data: {
-          title,
-          subtitle: subtitle || "pasākumi",
-          eventTitle,
-          eventSubtitle: eventSubtitle || "",
-          eventDescription: eventDescription || "",
-          eventLocation: eventLocation || "Rīga, Latvija",
-          eventDates: eventDates || "27/08 - 14/09",
-          eventYear: eventYear || "2025",
-          eventType: eventType || "Čempionāts",
-          eventTeams: eventTeams || "24 komandas",
-          buttonText: buttonText || "PILNS KALENDĀRS",
-          buttonLink: buttonLink || "/calendar",
+          title: title !== undefined ? title : null,
+          subtitle: subtitle !== undefined ? subtitle : null,
+          eventTitle: eventTitle !== undefined ? eventTitle : null,
+          eventSubtitle: eventSubtitle !== undefined ? eventSubtitle : null,
+          eventDescription: eventDescription !== undefined ? eventDescription : null,
+          eventLocation: eventLocation !== undefined ? eventLocation : null,
+          eventDates: eventDates !== undefined ? eventDates : null,
+          eventStartDate: eventStartDate ? new Date(eventStartDate) : null,
+          eventEndDate: eventEndDate ? new Date(eventEndDate) : null,
+          eventYear: eventYear !== undefined ? eventYear : null,
+          eventType: eventType !== undefined ? eventType : null,
+          eventTeams: eventTeams !== undefined ? eventTeams : null,
+          buttonText: buttonText !== undefined ? buttonText : null,
+          buttonLink: buttonLink !== undefined ? buttonLink : null,
           logoImage: logoImage,
-          backgroundGradient: backgroundGradient || "from-red-600 to-red-700",
-          showAdditionalText: showAdditionalText !== undefined ? showAdditionalText : true,
-          additionalText: additionalText || "Vairāk sporta pasākumu un spēļu skatīties kalendārā",
-          additionalButtonText: additionalButtonText || "Skatīt visus pasākumus",
-          additionalButtonLink: additionalButtonLink || "/calendar"
+          backgroundGradient: backgroundGradient !== undefined ? backgroundGradient : null,
+          customColorFrom: customColorFrom || null,
+          customColorTo: customColorTo || null,
+          showAdditionalText: showAdditionalText !== undefined ? showAdditionalText : false,
+          additionalText: additionalText !== undefined ? additionalText : null,
+          additionalButtonText: additionalButtonText !== undefined ? additionalButtonText : null,
+          additionalButtonLink: additionalButtonLink !== undefined ? additionalButtonLink : null
         }
       });
     }

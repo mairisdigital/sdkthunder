@@ -47,15 +47,15 @@ export async function POST(req: Request) {
     const item = await prisma.galleryItem.create({
       data: {
         title: body.title,
-        type: body.type || 'PHOTO',
+        type: body.type !== undefined ? body.type : 'PHOTO',
         url: body.url,
         thumbnail: body.thumbnail,
-        category: body.category || 'all',
-        tags: body.tags || [],
+        category: body.category !== undefined ? body.category : null,
+        tags: body.tags !== undefined ? body.tags : [],
         description: body.description,
-        author: body.author || 'SDKThunder',
-        featured: body.featured || false,
-        order: body.order || 0,
+        author: body.author !== undefined ? body.author : null,
+        featured: body.featured !== undefined ? body.featured : false,
+        order: body.order !== undefined ? body.order : 0,
         duration: body.duration
       }
     });

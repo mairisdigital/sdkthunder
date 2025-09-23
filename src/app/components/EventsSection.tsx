@@ -14,6 +14,8 @@ interface EventsSettings {
   eventDescription: string;
   eventLocation: string;
   eventDates: string;
+  eventStartDate: string | null; // ISO string format
+  eventEndDate: string | null; // ISO string format
   eventYear: string;
   eventType: string;
   eventTeams: string;
@@ -21,6 +23,8 @@ interface EventsSettings {
   buttonLink: string;
   logoImage: string | null;
   backgroundGradient: string;
+  customColorFrom: string | null;
+  customColorTo: string | null;
   showAdditionalText: boolean;
   additionalText: string;
   additionalButtonText: string;
@@ -37,6 +41,8 @@ const EventsSection: React.FC = () => {
     eventDescription: "2025. gada Eiropas vīriešu basketbola čempionāts.",
     eventLocation: "Rīga, Latvija",
     eventDates: "27/08 - 14/09",
+    eventStartDate: null,
+    eventEndDate: null,
     eventYear: "2025",
     eventType: "Čempionāts",
     eventTeams: "24 komandas",
@@ -44,6 +50,8 @@ const EventsSection: React.FC = () => {
     buttonLink: "/calendar",
     logoImage: null, // Sākotnēji nav logo
     backgroundGradient: "from-red-600 to-red-700",
+    customColorFrom: null,
+    customColorTo: null,
     showAdditionalText: true,
     additionalText: "Vairāk sporta pasākumu un spēļu skatīties kalendārā",
     additionalButtonText: "Skatīt visus pasākumus",
@@ -106,22 +114,36 @@ const EventsSection: React.FC = () => {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="text-slate-800">{settings.title} </span>
-            <span className="text-red-600 relative">
-              {settings.subtitle}
-              <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-red-500 to-orange-500 rounded-full" />
-            </span>
-          </h2>
-        </div>
+        {(settings.title || settings.subtitle) && (
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              {settings.title && <span className="text-slate-800">{settings.title} </span>}
+              {settings.subtitle && (
+                <span className="text-red-600 relative">
+                  {settings.subtitle}
+                  <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-red-500 to-orange-500 rounded-full" />
+                </span>
+              )}
+            </h2>
+          </div>
+        )}
 
         <div className="max-w-6xl mx-auto">
           <div className="bg-white rounded-3xl shadow-2xl overflow-hidden hover:shadow-3xl transition-all duration-500 group">
             <div className="flex flex-col lg:flex-row">
               
               {/* Left Side - Date */}
-              <div className={`lg:w-1/3 bg-gradient-to-br ${settings.backgroundGradient} p-8 text-white relative overflow-hidden`}>
+              <div
+                className="lg:w-1/3 p-8 text-white relative overflow-hidden flex items-center justify-center"
+                style={{
+                  background: settings.customColorFrom
+                    ? settings.customColorTo
+                      ? `linear-gradient(to bottom right, ${settings.customColorFrom}, ${settings.customColorTo})`
+                      : settings.customColorFrom
+                    : undefined
+                }}
+                {...(!settings.customColorFrom && { className: `lg:w-1/3 bg-gradient-to-br ${settings.backgroundGradient} p-8 text-white relative overflow-hidden flex items-center justify-center` })}
+              >
                 <div className="absolute inset-0 opacity-10">
                   <div 
                     style={{
@@ -134,18 +156,30 @@ const EventsSection: React.FC = () => {
                 <div className="relative z-10 text-center">
                   <div className="flex items-center justify-center mb-4">
                     <Calendar className="w-8 h-8 mr-2" />
-                    <span className="text-lg font-semibold">Datums</span>
+                    <span className="text-lg font-semibold">Datums:</span>
                   </div>
-                  
-                  <div className="mb-6">
-                    <div className="text-3xl md:text-4xl font-bold mb-2">{settings.eventDates}</div>
-                    <div className="text-xl font-semibold bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 inline-block">
-                      {settings.eventYear}
+
+                    <div className="mb-6 text-center">
+                    {settings.eventStartDate && settings.eventEndDate && (
+                      <div>
+                      <div className="text-3xl md:text-4xl font-bold mb-2">
+                        {new Date(settings.eventStartDate).toLocaleDateString('lv-LV', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                        })}
+                      </div>
+                      <div className="text-lg opacity-80 mb-2">līdz</div>
+                      <div className="text-3xl md:text-4xl font-bold">
+                        {new Date(settings.eventEndDate).toLocaleDateString('lv-LV', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                        })}
+                      </div>
+                      </div>
+                    )}
                     </div>
-                  </div>
-                  
-                  <div className="text-2xl font-bold mb-2">{settings.eventTitle.split(' ').slice(0, 2).join(' ')}</div>
-                  <div className="text-lg opacity-90">{settings.eventYear}</div>
                 </div>
               </div>
 
@@ -155,40 +189,64 @@ const EventsSection: React.FC = () => {
                   
                   {/* Event Info */}
                   <div className="flex-1 mb-8 lg:mb-0">
-                    <h3 className="text-2xl md:text-3xl font-bold text-slate-800 mb-4 group-hover:text-red-600 transition-colors duration-300">
-                      {settings.eventTitle}
-                    </h3>
-                    
-                    <p className="text-xl text-slate-700 mb-6 leading-relaxed">
-                      {settings.eventDescription}
-                    </p>
-                    
-                    <div className="flex items-center text-slate-600 mb-6">
-                      <MapPin className="w-5 h-5 mr-2 text-red-500" />
-                      <span className="text-lg font-medium">{settings.eventLocation}</span>
-                    </div>
+                    {settings.eventTitle && (
+                      <h3 className="text-2xl md:text-3xl font-bold text-slate-800 mb-4 group-hover:text-red-600 transition-colors duration-300">
+                        {settings.eventTitle}
+                      </h3>
+                    )}
+
+                    {settings.eventDescription && (
+                      <p className="text-xl text-slate-700 mb-6 leading-relaxed">
+                        {settings.eventDescription}
+                      </p>
+                    )}
+
+                    {settings.eventLocation && (
+                      <div className="flex items-center text-slate-600 mb-6">
+                        <MapPin className="w-5 h-5 mr-2 text-red-500" />
+                        <span className="text-lg font-medium">{settings.eventLocation}</span>
+                      </div>
+                    )}
 
                     {/* Event Stats */}
-                    <div className="flex flex-wrap gap-4 mb-8">
-                      <div className="flex items-center bg-slate-100 rounded-full px-4 py-2">
-                        <Trophy className="w-4 h-4 mr-2 text-yellow-500" />
-                        <span className="text-sm font-medium text-slate-700">{settings.eventType}</span>
+                    {(settings.eventType || settings.eventTeams) && (
+                      <div className="flex flex-wrap gap-4 mb-8">
+                        {settings.eventType && (
+                          <div className="flex items-center bg-slate-100 rounded-full px-4 py-2">
+                            <Trophy className="w-4 h-4 mr-2 text-yellow-500" />
+                            <span className="text-sm font-medium text-slate-700">{settings.eventType}</span>
+                          </div>
+                        )}
+                        {settings.eventTeams && (
+                          <div className="flex items-center bg-slate-100 rounded-full px-4 py-2">
+                            <Users className="w-4 h-4 mr-2 text-blue-500" />
+                            <span className="text-sm font-medium text-slate-700">{settings.eventTeams}</span>
+                          </div>
+                        )}
                       </div>
-                      <div className="flex items-center bg-slate-100 rounded-full px-4 py-2">
-                        <Users className="w-4 h-4 mr-2 text-blue-500" />
-                        <span className="text-sm font-medium text-slate-700">{settings.eventTeams}</span>
-                      </div>
-                    </div>
+                    )}
 
                     {/* CTA Button */}
-                    <Link href={settings.buttonLink}>
-                      <button className={`bg-gradient-to-r ${settings.backgroundGradient} hover:opacity-90 text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg group`}>
-                        <span className="flex items-center">
-                          {settings.buttonText}
-                          <Calendar className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
-                        </span>
-                      </button>
-                    </Link>
+                    {settings.buttonText && settings.buttonLink && (
+                      <Link href={settings.buttonLink}>
+                        <button
+                          className="hover:opacity-90 text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg group"
+                          style={{
+                            background: settings.customColorFrom
+                              ? settings.customColorTo
+                                ? `linear-gradient(to right, ${settings.customColorFrom}, ${settings.customColorTo})`
+                                : settings.customColorFrom
+                              : undefined
+                          }}
+                          {...(!settings.customColorFrom && { className: `bg-gradient-to-r ${settings.backgroundGradient} hover:opacity-90 text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg group` })}
+                        >
+                          <span className="flex items-center">
+                            {settings.buttonText}
+                            <Calendar className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                          </span>
+                        </button>
+                      </Link>
+                    )}
                   </div>
 
                   {/* Event Logo */}
@@ -223,7 +281,10 @@ const EventsSection: React.FC = () => {
                       {/* Optional overlay text if needed */}
                       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                         <div className="bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-medium text-slate-700 shadow-lg">
-                          {settings.eventYear}
+                          {settings.eventStartDate
+                            ? new Date(settings.eventStartDate).getFullYear()
+                            : settings.eventYear
+                          }
                         </div>
                       </div>
                     </div>

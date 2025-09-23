@@ -68,15 +68,9 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { logoText, logoSubtext, menuItems } = body;
+    const { logoText, logoSubtext, logoImage, menuItems } = body;
 
-    // Validācija
-    if (!logoText || !logoSubtext) {
-      return NextResponse.json(
-        { error: 'Logo text and subtext are required' },
-        { status: 400 }
-      );
-    }
+    // Bez validācijas - ļaujam tukšus laukus
 
     // Atjauninām navbar iestatījumus
     const existingSettings = await prisma.navbarSettings.findFirst({
@@ -88,15 +82,17 @@ export async function POST(request: NextRequest) {
       settings = await prisma.navbarSettings.update({
         where: { id: existingSettings.id },
         data: {
-          logoText,
-          logoSubtext,
+          logoText: logoText !== undefined ? logoText : null,
+          logoSubtext: logoSubtext !== undefined ? logoSubtext : null,
+          logoImage: logoImage !== undefined ? logoImage : existingSettings.logoImage,
         }
       });
     } else {
       settings = await prisma.navbarSettings.create({
         data: {
-          logoText,
-          logoSubtext,
+          logoText: logoText !== undefined ? logoText : null,
+          logoSubtext: logoSubtext !== undefined ? logoSubtext : null,
+          logoImage,
         }
       });
     }

@@ -27,6 +27,8 @@ interface EventsSettings {
   eventDescription: string;
   eventLocation: string;
   eventDates: string;
+  eventStartDate: string; // ISO string format
+  eventEndDate: string; // ISO string format
   eventYear: string;
   eventType: string;
   eventTeams: string;
@@ -34,6 +36,8 @@ interface EventsSettings {
   buttonLink: string;
   logoImage: string | null;
   backgroundGradient: string;
+  customColorFrom: string | null;
+  customColorTo: string | null;
   showAdditionalText: boolean;
   additionalText: string;
   additionalButtonText: string;
@@ -49,6 +53,8 @@ export default function AdminEvents() {
     eventDescription: "2025. gada Eiropas vīriešu basketbola čempionāts.",
     eventLocation: "Rīga, Latvija",
     eventDates: "27/08 - 14/09",
+    eventStartDate: new Date("2025-08-27").toISOString().split('T')[0],
+    eventEndDate: new Date("2025-09-14").toISOString().split('T')[0],
     eventYear: "2025",
     eventType: "Čempionāts",
     eventTeams: "24 komandas",
@@ -56,6 +62,8 @@ export default function AdminEvents() {
     buttonLink: "/calendar",
     logoImage: null, // Sākotnēji nav logo
     backgroundGradient: "from-red-600 to-red-700",
+    customColorFrom: null,
+    customColorTo: null,
     showAdditionalText: true,
     additionalText: "Vairāk sporta pasākumu un spēļu skatīties kalendārā",
     additionalButtonText: "Skatīt visus pasākumus",
@@ -69,14 +77,6 @@ export default function AdminEvents() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  const gradientOptions = [
-    { name: "Sarkanā", value: "from-red-600 to-red-700" },
-    { name: "Zilā", value: "from-blue-600 to-blue-700" },
-    { name: "Zaļā", value: "from-green-600 to-green-700" },
-    { name: "Purpura", value: "from-purple-600 to-purple-700" },
-    { name: "Oranžā", value: "from-orange-600 to-orange-700" },
-    { name: "Rozā", value: "from-pink-600 to-pink-700" }
-  ];
 
   useEffect(() => {
     fetchEventsData();
@@ -87,7 +87,11 @@ export default function AdminEvents() {
       const response = await fetch('/api/admin/events');
       if (response.ok) {
         const eventsData = await response.json();
-        setData(eventsData);
+        setData({
+          ...eventsData,
+          eventStartDate: eventsData.eventStartDate ? new Date(eventsData.eventStartDate).toISOString().split('T')[0] : '',
+          eventEndDate: eventsData.eventEndDate ? new Date(eventsData.eventEndDate).toISOString().split('T')[0] : ''
+        });
       }
     } catch (error) {
       console.error('Error fetching Events data:', error);
@@ -113,7 +117,11 @@ export default function AdminEvents() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          eventStartDate: data.eventStartDate ? new Date(data.eventStartDate).toISOString() : null,
+          eventEndDate: data.eventEndDate ? new Date(data.eventEndDate).toISOString() : null
+        }),
       });
 
       if (response.ok) {
@@ -321,18 +329,6 @@ export default function AdminEvents() {
                     placeholder="FIBA EuroBasket 2025"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Pasākuma gads
-                  </label>
-                  <input
-                    type="text"
-                    value={data.eventYear}
-                    onChange={(e) => handleInputChange('eventYear', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                    placeholder="2025"
-                  />
-                </div>
               </div>
 
               <div>
@@ -350,7 +346,7 @@ export default function AdminEvents() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                  <label className="text-sm font-medium text-gray-700 mb-1 flex items-center">
                     <MapPin className="w-4 h-4 mr-1 text-red-500" />
                     Norises vieta
                   </label>
@@ -364,7 +360,7 @@ export default function AdminEvents() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Datumi
+                    Datumi (teksts)
                   </label>
                   <input
                     type="text"
@@ -378,7 +374,34 @@ export default function AdminEvents() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                  <label className="text-sm font-medium text-gray-700 mb-1 flex items-center">
+                    <Calendar className="w-4 h-4 mr-2 text-green-500" />
+                    Sākuma datums
+                  </label>
+                  <input
+                    type="date"
+                    value={data.eventStartDate}
+                    onChange={(e) => handleInputChange('eventStartDate', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-1 flex items-center">
+                    <Calendar className="w-4 h-4 mr-2 text-red-500" />
+                    Beigu datums
+                  </label>
+                  <input
+                    type="date"
+                    value={data.eventEndDate}
+                    onChange={(e) => handleInputChange('eventEndDate', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-1 flex items-center">
                     <Trophy className="w-4 h-4 mr-1 text-yellow-500" />
                     Pasākuma tips
                   </label>
@@ -391,7 +414,7 @@ export default function AdminEvents() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                  <label className="text-sm font-medium text-gray-700 mb-1 flex items-center">
                     <Users className="w-4 h-4 mr-1 text-blue-500" />
                     Komandu skaits
                   </label>
@@ -566,26 +589,92 @@ export default function AdminEvents() {
               <Palette className="w-5 h-5 mr-2 text-red-600" />
               Vizuālie iestatījumi
             </h2>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
-                Fona krāsu gradients
-              </label>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {gradientOptions.map((gradient) => (
-                  <button
-                    key={gradient.value}
-                    onClick={() => handleInputChange('backgroundGradient', gradient.value)}
-                    className={`p-4 rounded-lg border-2 transition-all duration-300 ${
-                      data.backgroundGradient === gradient.value
-                        ? 'border-red-500 ring-2 ring-red-200'
-                        : 'border-gray-300 hover:border-gray-400'
-                    }`}
-                  >
-                    <div className={`w-full h-8 rounded bg-gradient-to-r ${gradient.value} mb-2`}></div>
-                    <span className="text-sm font-medium text-gray-700">{gradient.name}</span>
-                  </button>
-                ))}
+
+            <div className="space-y-6">
+              <div>
+                <div className="flex items-center mb-4">
+                  <input
+                    type="checkbox"
+                    id="useCustomColors"
+                    checked={!!(data.customColorFrom || data.customColorTo)}
+                    onChange={(e) => {
+                      if (!e.target.checked) {
+                        handleInputChange('customColorFrom', null);
+                        handleInputChange('customColorTo', null);
+                      } else {
+                        handleInputChange('customColorFrom', '#dc2626');
+                        handleInputChange('customColorTo', '#b91c1c');
+                      }
+                    }}
+                    className="mr-2 rounded border-gray-300 text-red-600 focus:ring-red-500"
+                  />
+                  <label htmlFor="useCustomColors" className="text-sm font-medium text-gray-700">
+                    Izmantot pielāgotas hex krāsas
+                  </label>
+                </div>
+
+                {(data.customColorFrom || data.customColorTo) && (
+                  <div className="space-y-4 pl-6 border-l-2 border-gray-200">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Galvenā krāsa (HEX)
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="color"
+                            value={data.customColorFrom || '#dc2626'}
+                            onChange={(e) => handleInputChange('customColorFrom', e.target.value)}
+                            className="h-10 w-10 rounded border border-gray-300"
+                          />
+                          <input
+                            type="text"
+                            value={data.customColorFrom || ''}
+                            onChange={(e) => handleInputChange('customColorFrom', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                            placeholder="#dc2626"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Otrā krāsa (HEX) - izvēles
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="color"
+                            value={data.customColorTo || '#b91c1c'}
+                            onChange={(e) => handleInputChange('customColorTo', e.target.value)}
+                            className="h-10 w-10 rounded border border-gray-300"
+                            disabled={!data.customColorTo}
+                          />
+                          <input
+                            type="text"
+                            value={data.customColorTo || ''}
+                            onChange={(e) => handleInputChange('customColorTo', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                            placeholder="Atstāt tukšu vienkrāsainai"
+                          />
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">
+                          Atstājiet tukšu, lai izmantotu tikai vienu krāsu bez gradienta
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="p-4 bg-gray-50 rounded-lg">
+                      <p className="text-sm text-gray-600 mb-2">Priekšskatījums:</p>
+                      <div
+                        className="w-full h-8 rounded"
+                        style={{
+                          background: data.customColorTo
+                            ? `linear-gradient(to right, ${data.customColorFrom || '#dc2626'}, ${data.customColorTo})`
+                            : data.customColorFrom || '#dc2626'
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -614,7 +703,17 @@ export default function AdminEvents() {
                     <div className="flex flex-col">
                       
                       {/* Left Side - Date */}
-                      <div className={`bg-gradient-to-r ${data.backgroundGradient} p-4 text-white text-center`}>
+                      <div
+                        className="p-4 text-white text-center"
+                        style={{
+                          background: data.customColorFrom
+                            ? data.customColorTo
+                              ? `linear-gradient(to right, ${data.customColorFrom}, ${data.customColorTo})`
+                              : data.customColorFrom
+                            : undefined
+                        }}
+                        {...(!data.customColorFrom && { className: `bg-gradient-to-r ${data.backgroundGradient} p-4 text-white text-center` })}
+                      >
                         <div className="mb-2">
                           <Calendar className="w-4 h-4 mx-auto mb-1" />
                           <span className="text-xs font-semibold">Datums</span>
@@ -655,7 +754,17 @@ export default function AdminEvents() {
                               </div>
                             </div>
 
-                            <button className={`bg-gradient-to-r ${data.backgroundGradient} text-white px-3 py-1 rounded-lg text-xs font-bold transition-all duration-300 hover:scale-105`}>
+                            <button
+                              className="text-white px-3 py-1 rounded-lg text-xs font-bold transition-all duration-300 hover:scale-105"
+                              style={{
+                                background: data.customColorFrom
+                                  ? data.customColorTo
+                                    ? `linear-gradient(to right, ${data.customColorFrom}, ${data.customColorTo})`
+                                    : data.customColorFrom
+                                  : undefined
+                              }}
+                              {...(!data.customColorFrom && { className: `bg-gradient-to-r ${data.backgroundGradient} text-white px-3 py-1 rounded-lg text-xs font-bold transition-all duration-300 hover:scale-105` })}
+                            >
                               {data.buttonText}
                             </button>
                           </div>

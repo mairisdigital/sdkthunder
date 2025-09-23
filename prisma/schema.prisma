@@ -26,6 +26,7 @@ model NavbarSettings {
   id          Int      @id @default(autoincrement())
   logoText    String   @default("SDK")
   logoSubtext String   @default("THUNDER")
+  logoImage   String?  // URL uz logo attēlu
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -57,6 +58,8 @@ model HeroSettings {
   countdownTitle    String   @default("FIBA EuroBasket")
   countdownSubtitle String   @default("2025")
   countdownDate     DateTime @default(now())
+  countdownStartDate DateTime @default(now())
+  countdownDateLabel String  @default("Datumi:")
   backgroundOverlay String?  @default("#7c2d12")
   backgroundImage   String?  
   logoImage         String?  
@@ -76,13 +79,17 @@ model EventsSettings {
   eventDescription      String?  @default("")
   eventLocation         String?  @default("Rīga, Latvija")
   eventDates            String?  @default("27/08 - 14/09")
+  eventStartDate        DateTime? // Sākuma datums
+  eventEndDate          DateTime? // Beigu datums
   eventYear             String?  @default("2025")
   eventType             String?  @default("Čempionāts")
   eventTeams            String?  @default("24 komandas")
   buttonText            String   @default("PILNS KALENDĀRS")
   buttonLink            String   @default("/calendar")
-  logoImage             String?  
+  logoImage             String?
   backgroundGradient    String   @default("from-red-600 to-red-700")
+  customColorFrom       String?  // Custom hex krāsa sākumam
+  customColorTo         String?  // Custom hex krāsa beigām
   showAdditionalText    Boolean  @default(true)
   additionalText        String?  @default("Vairāk sporta pasākumu un spēļu skatīties kalendārā")
   additionalButtonText  String?  @default("Skatīt visus pasākumus")

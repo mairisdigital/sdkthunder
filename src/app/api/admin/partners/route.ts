@@ -41,11 +41,11 @@ export async function POST(request: NextRequest) {
       data: {
         name,
         tier,
-        description: description || null,
-        logo: logo || null,
-        website: website || null,
+        description: description !== undefined ? description : null,
+        logo: logo !== undefined ? logo : null,
+        website: website !== undefined ? website : null,
         active: active !== undefined ? active : true,
-        order: order || 0
+        order: order !== undefined ? order : 0
       }
     });
 

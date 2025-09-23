@@ -7,15 +7,17 @@ import Image from 'next/image';
 interface HeroSettings {
   id: number;
   title: string;
-  subtitle: string;
-  locationText: string;
-  tagline1: string;
-  tagline2: string;
-  buttonText: string;
+  subtitle: string | null;
+  locationText: string | null;
+  tagline1: string | null;
+  tagline2: string | null;
+  buttonText: string | null;
   buttonLink: string;
-  countdownTitle: string;
-  countdownSubtitle: string;
+  countdownTitle: string | null;
+  countdownSubtitle: string | null;
   countdownDate: string; // ISO string format
+  countdownStartDate: string; // ISO string format
+  countdownDateLabel: string;
   backgroundOverlay: string;
   backgroundImage: string | null; // Cloudinary URL
   logoImage: string | null; // Cloudinary URL
@@ -42,6 +44,8 @@ const HeroSection: React.FC = () => {
     countdownTitle: "FIBA EuroBasket",
     countdownSubtitle: "2025",
     countdownDate: new Date("2025-08-27T00:00:00Z").toISOString(),
+    countdownStartDate: new Date("2025-08-20T00:00:00Z").toISOString(),
+    countdownDateLabel: "Datumi:",
     backgroundOverlay: "#7c2d12",
     backgroundImage: null,
     logoImage: null,
@@ -185,9 +189,6 @@ const HeroSection: React.FC = () => {
         />
       )}
 
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-red-900/30 to-black/60" />
-
       <div className="relative z-10 container mx-auto px-4 flex flex-col justify-center min-h-screen text-white">
         
         {/* Title Section */}
@@ -197,16 +198,20 @@ const HeroSection: React.FC = () => {
               {settings.title}
             </span>
           </h1>
-          <p className="text-xl md:text-2xl font-light mb-2 opacity-90">
-            {settings.subtitle}
-          </p>
-          <p className="text-lg md:text-xl opacity-80">
-            {settings.locationText}
-          </p>
+          {settings.subtitle && (
+            <p className="text-xl md:text-2xl font-light mb-2 opacity-90">
+              {settings.subtitle}
+            </p>
+          )}
+          {settings.locationText && (
+            <p className="text-lg md:text-xl opacity-80">
+              {settings.locationText}
+            </p>
+          )}
         </div>
 
         {/* Logo Section */}
-        <div className="flex justify-center mb-12">
+        <div className="flex justify-center">
           <div className="relative group">
             <div className="w-48 h-48 md:w-64 md:h-64">
               <div className="relative w-full h-full flex items-center justify-center">
@@ -245,18 +250,22 @@ const HeroSection: React.FC = () => {
         </div>
 
         {/* Taglines and Button */}
-        <div className="flex flex-col md:flex-row justify-center items-center gap-8 mb-16">
-          <div className="flex flex-col items-center">
-            <h2 className="text-4xl md:text-6xl font-bold mb-4 text-shadow-lg italic transform -rotate-2">
-              {settings.tagline1}
-            </h2>
-            <Link href={settings.buttonLink}>
-              <button className="bg-red-600 hover:bg-red-700 px-8 py-3 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 shadow-lg">
-                {settings.buttonText}
-              </button>
-            </Link>
-          </div>
-          
+        <div className="flex flex-col md:flex-row justify-center items-center gap-8 mb-8">
+          {settings.tagline1 && (
+            <div className="flex flex-col items-center">
+              <h2 className="text-4xl md:text-6xl font-bold mb-4 text-shadow-lg italic transform -rotate-2">
+                {settings.tagline1}
+              </h2>
+              {settings.buttonText && (
+                <Link href={settings.buttonLink}>
+                  <button className="bg-red-600 hover:bg-red-700 px-8 py-3 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 shadow-lg">
+                    {settings.buttonText}
+                  </button>
+                </Link>
+              )}
+            </div>
+          )}
+
           {settings.tagline2 && (
             <div className="flex flex-col items-center">
               <h2 className="text-4xl md:text-6xl font-bold mb-4 text-shadow-lg italic transform rotate-2">
@@ -267,13 +276,31 @@ const HeroSection: React.FC = () => {
         </div>
 
         {/* Countdown */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 max-w-2xl mx-auto shadow-2xl">
-          <div className="text-center mb-6">
-            <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-              {settings.countdownTitle}
-            </h3>
-            <p className="text-lg text-gray-600">{settings.countdownSubtitle}</p>
-          </div>
+        {(settings.countdownTitle || settings.countdownSubtitle) && (
+          <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 max-w-2xl mx-auto shadow-2xl">
+            <div className="text-center">
+              {settings.countdownTitle && (
+                <h3 className="text-2xl md:text-2xl font-bold text-gray-800 mb-2">
+                  {settings.countdownTitle}
+                </h3>
+              )}
+              {settings.countdownStartDate && settings.countdownDate && (
+                <div className="mt-4 p-3 bg-gray-100 rounded-lg">
+                  <p className="text-sm text-gray-800">{settings.countdownDateLabel}</p>
+                  <p className="text-lg font-semibold text-gray-800">
+                    {new Date(settings.countdownStartDate).toLocaleDateString('lv-LV', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric'
+                    })} - {new Date(settings.countdownDate).toLocaleDateString('lv-LV', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric'
+                    })}
+                  </p>
+                </div>
+              )}
+            </div>
           
           <div className="grid grid-cols-4 gap-4">
             {[
@@ -292,7 +319,8 @@ const HeroSection: React.FC = () => {
               </div>
             ))}
           </div>
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

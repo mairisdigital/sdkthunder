@@ -1,20 +1,25 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { 
-  Save, 
-  Eye, 
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  Save,
+  Eye,
   Plus,
   Trash2,
   Menu,
   AlertCircle,
   CheckCircle,
-  GripVertical
+  GripVertical,
+  Upload,
+  Image,
+  Loader2
 } from 'lucide-react';
+import NextImage from 'next/image';
 
 interface NavbarSettings {
   logoText: string;
   logoSubtext: string;
+  logoImage: string | null;
 }
 
 interface MenuItem {
@@ -35,7 +40,8 @@ export default function AdminNavbar() {
   const [data, setData] = useState<NavbarData>({
     settings: {
       logoText: 'SDK',
-      logoSubtext: 'THUNDER'
+      logoSubtext: 'THUNDER',
+      logoImage: null
     },
     menuItems: [
       { name: 'SĀKUMS', href: '/', order: 1, active: true, visible: true },
@@ -52,6 +58,10 @@ export default function AdminNavbar() {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [showPreview, setShowPreview] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  const logoFileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchNavbarData();
@@ -128,6 +138,77 @@ export default function AdminNavbar() {
     }));
   };
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.includes('image/')) {
+      alert('Lūdzu, izvēlieties attēla failu.');
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadProgress(0);
+
+    try {
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => Math.min(prev + 10, 90));
+      }, 300);
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('folder', 'sdkthunder/navbar');
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+
+      if (!response.ok) {
+        throw new Error('Failed to upload');
+      }
+
+      const result = await response.json();
+
+      setData(prev => ({
+        ...prev,
+        settings: {
+          ...prev.settings,
+          logoImage: result.url
+        }
+      }));
+
+      if (logoFileInputRef.current) {
+        logoFileInputRef.current.value = '';
+      }
+
+    } catch (error) {
+      console.error('Error uploading logo:', error);
+      alert('Kļūda augšupielādējot logo. Lūdzu, mēģiniet vēlreiz.');
+    } finally {
+      setTimeout(() => {
+        setIsUploading(false);
+        setUploadProgress(0);
+      }, 500);
+    }
+  };
+
+  const handleRemoveLogo = () => {
+    setData(prev => ({
+      ...prev,
+      settings: {
+        ...prev.settings,
+        logoImage: null
+      }
+    }));
+    if (logoFileInputRef.current) {
+      logoFileInputRef.current.value = '';
+    }
+  };
+
   const handleSave = async () => {
     setIsSaving(true);
     
@@ -140,6 +221,7 @@ export default function AdminNavbar() {
         body: JSON.stringify({
           logoText: data.settings.logoText,
           logoSubtext: data.settings.logoSubtext,
+          logoImage: data.settings.logoImage,
           menuItems: data.menuItems,
         }),
       });
@@ -230,32 +312,100 @@ export default function AdminNavbar() {
           {/* Logo Settings */}
           <div className="bg-white rounded-xl shadow-lg p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-6">Logo iestatījumi</h2>
-            
-            <div className="space-y-4">
+
+            <div className="space-y-6">
+              {/* Logo attēls */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Galvenais teksts
+                  Logo attēls
                 </label>
-                <input
-                  type="text"
-                  value={data.settings.logoText}
-                  onChange={(e) => handleSettingsChange('logoText', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all duration-300"
-                  placeholder="SDK"
-                />
+
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex-shrink-0 w-32 h-20 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 overflow-hidden relative">
+                    {data.settings.logoImage ? (
+                      <div className="relative w-full h-full">
+                        <NextImage
+                          src={data.settings.logoImage}
+                          alt="Logo attēls"
+                          fill
+                          className="object-contain"
+                        />
+                      </div>
+                    ) : (
+                      <div className="text-gray-400 text-sm text-center p-2">
+                        <Image className="w-6 h-6 mx-auto mb-1 opacity-50" />
+                        <span className="text-xs">Nav logo</span>
+                      </div>
+                    )}
+
+                    {isUploading && (
+                      <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-white">
+                        <Loader2 className="w-6 h-6 animate-spin mb-1" />
+                        <span className="text-xs">{uploadProgress}%</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <label className="flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-all duration-300 cursor-pointer">
+                      <Upload className="w-4 h-4 mr-2" />
+                      Augšupielādēt logo
+                      <input
+                        ref={logoFileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="hidden"
+                      />
+                    </label>
+
+                    {data.settings.logoImage && (
+                      <button
+                        onClick={handleRemoveLogo}
+                        className="flex items-center px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg font-medium transition-all duration-300"
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Noņemt logo
+                      </button>
+                    )}
+
+                    <p className="text-xs text-gray-500 mt-1">
+                      Ieteicamais izmērs: 200x80px, PNG ar caurspīdīgu fonu. Ja nav attēla, tiks rādīts teksts.
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Apakšteksts
-                </label>
-                <input
-                  type="text"
-                  value={data.settings.logoSubtext}
-                  onChange={(e) => handleSettingsChange('logoSubtext', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all duration-300"
-                  placeholder="THUNDER"
-                />
+              {/* Teksta alternatīva */}
+              <div className="border-t pt-4">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Teksta alternatīva (ja nav logo)</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Galvenais teksts
+                    </label>
+                    <input
+                      type="text"
+                      value={data.settings.logoText}
+                      onChange={(e) => handleSettingsChange('logoText', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all duration-300"
+                      placeholder="SDK"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Apakšteksts
+                    </label>
+                    <input
+                      type="text"
+                      value={data.settings.logoSubtext}
+                      onChange={(e) => handleSettingsChange('logoSubtext', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all duration-300"
+                      placeholder="THUNDER"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -357,11 +507,21 @@ export default function AdminNavbar() {
                       {/* Logo */}
                       <div className="flex-shrink-0">
                         <div className="flex items-center">
-                          <div className="w-16 h-16 bg-gradient-to-br from-red-600 to-red-800 rounded-lg flex items-center justify-center shadow-lg">
-                            <div className="text-white font-bold text-xs text-center leading-tight">
-                              <div>{data.settings.logoText}</div>
-                              <div className="text-[10px]">{data.settings.logoSubtext}</div>
-                            </div>
+                          <div className="w-16 h-16 bg-gradient-to-br from-red-600 to-red-800 rounded-lg flex items-center justify-center shadow-lg overflow-hidden">
+                            {data.settings.logoImage ? (
+                              <NextImage
+                                src={data.settings.logoImage}
+                                alt="Logo"
+                                width={64}
+                                height={64}
+                                className="object-contain w-full h-full"
+                              />
+                            ) : (
+                              <div className="text-white font-bold text-xs text-center leading-tight">
+                                <div>{data.settings.logoText}</div>
+                                <div className="text-[10px]">{data.settings.logoSubtext}</div>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>

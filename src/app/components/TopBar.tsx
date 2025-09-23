@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Mail, MapPin, Facebook, Instagram, Youtube, Calendar, User, AlertCircle } from 'lucide-react';
+import { Mail, MapPin, Calendar, User, AlertCircle } from 'lucide-react';
+import Image from 'next/image';
 
 interface TopBarSettings {
   email: string;
@@ -116,17 +117,6 @@ const TopBar: React.FC = () => {
           
           {/* Kreisā puse - Kontaktinformācija */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center lg:justify-start sm:space-x-6 space-y-2 sm:space-y-0">
-            {/* E-pasts */}
-            <div className="flex items-center justify-center sm:justify-start text-sm">
-              <Mail className="w-4 h-4 mr-2 text-red-400" />
-              <span className="text-slate-300 font-medium">{data.emailLabel}</span>
-              <a 
-                href={`mailto:${data.email}`}
-                className="ml-2 text-white hover:text-red-400 transition-colors duration-300 font-medium"
-              >
-                {data.email}
-              </a>
-            </div>
             
             {/* Atrašanās vieta */}
             <div className="flex items-center justify-center sm:justify-start text-sm">
@@ -170,7 +160,13 @@ const TopBar: React.FC = () => {
                   className="w-8 h-8 bg-slate-700 hover:bg-blue-600 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 group"
                   aria-label="Facebook"
                 >
-                  <Facebook className="w-4 h-4 fill-current group-hover:text-white" />
+                  <Image
+                    src="/facebook.svg"
+                    alt="Facebook"
+                    width={20}
+                    height={20}
+                    className="transition-all duration-300"
+                  />
                 </a>
               )}
               
@@ -182,7 +178,13 @@ const TopBar: React.FC = () => {
                   className="w-8 h-8 bg-slate-700 hover:bg-gradient-to-r hover:from-pink-500 hover:to-yellow-500 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 group"
                   aria-label="Instagram"
                 >
-                  <Instagram className="w-4 h-4 fill-current group-hover:text-white" />
+                  <Image
+                    src="/instagram.svg"
+                    alt="Instagram"
+                    width={20}
+                    height={20}
+                    className="transition-all duration-300"
+                  />
                 </a>
               )}
               
@@ -194,7 +196,13 @@ const TopBar: React.FC = () => {
                   className="w-8 h-8 bg-slate-700 hover:bg-red-600 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 group"
                   aria-label="YouTube"
                 >
-                  <Youtube className="w-4 h-4 fill-current group-hover:text-white" />
+                  <Image
+                    src="/youtube.svg"
+                    alt="YouTube"
+                    width={20}
+                    height={20}
+                    className="transition-all duration-300"
+                  />
                 </a>
               )}
             </div>

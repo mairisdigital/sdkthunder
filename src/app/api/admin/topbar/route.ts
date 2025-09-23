@@ -39,13 +39,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { email, emailLabel, location, locationLabel, facebook, instagram, youtube } = body;
 
-    // Validācija
-    if (!email || !location) {
-      return NextResponse.json(
-        { error: 'Email and location are required' },
-        { status: 400 }
-      );
-    }
+    // Bez validācijas - ļaujam tukšus laukus
 
     // Meklējam esošos iestatījumus
     const existingSettings = await prisma.topBarSettings.findFirst({
@@ -58,10 +52,10 @@ export async function POST(request: NextRequest) {
       settings = await prisma.topBarSettings.update({
         where: { id: existingSettings.id },
         data: {
-          email,
-          emailLabel: emailLabel || 'E-PASTS:',
-          location,
-          locationLabel: locationLabel || 'NĀKAMĀ PIETURA:',
+          email: email !== undefined ? email : null,
+          emailLabel: emailLabel !== undefined ? emailLabel : null,
+          location: location !== undefined ? location : null,
+          locationLabel: locationLabel !== undefined ? locationLabel : null,
           facebook: facebook || null,
           instagram: instagram || null,
           youtube: youtube || null,
@@ -71,10 +65,10 @@ export async function POST(request: NextRequest) {
       // Izveidojam jaunus
       settings = await prisma.topBarSettings.create({
         data: {
-          email,
-          emailLabel: emailLabel || 'E-PASTS:',
-          location,
-          locationLabel: locationLabel || 'NĀKAMĀ PIETURA:',
+          email: email !== undefined ? email : null,
+          emailLabel: emailLabel !== undefined ? emailLabel : null,
+          location: location !== undefined ? location : null,
+          locationLabel: locationLabel !== undefined ? locationLabel : null,
           facebook: facebook || null,
           instagram: instagram || null,
           youtube: youtube || null,

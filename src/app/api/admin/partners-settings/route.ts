@@ -8,17 +8,17 @@ export async function GET() {
       orderBy: { createdAt: 'desc' }
     });
 
-    // Ja nav iestatījumu, izveidojam default
+    // Ja nav iestatījumu, izveidojam tukšus
     if (!settings) {
       settings = await prisma.partnersSettings.create({
         data: {
-          title: "Mūsu Partneri",
-          subtitle: "Mūsu foršie draugi, atbalstītāji un sadarbības partneri",
-          ctaTitle: "Vēlies kļūt par mūsu partneri?",
-          ctaSubtitle: "Sazinies ar mums un kopā veidosim nākotni!",
-          ctaButtonText: "Sazināties ar mums",
-          ctaButtonLink: "/contact",
-          isActive: true
+          title: null,
+          subtitle: null,
+          ctaTitle: null,
+          ctaSubtitle: null,
+          ctaButtonText: null,
+          ctaButtonLink: null,
+          isActive: false
         }
       });
     }
@@ -47,13 +47,7 @@ export async function POST(request: NextRequest) {
       isActive
     } = body;
 
-    // Validācija
-    if (!title || !ctaTitle) {
-      return NextResponse.json(
-        { error: 'Title and CTA title are required' },
-        { status: 400 }
-      );
-    }
+    // Bez validācijas - ļaujam tukšus laukus
 
     // Meklējam esošos iestatījumus
     const existingSettings = await prisma.partnersSettings.findFirst({
@@ -66,26 +60,26 @@ export async function POST(request: NextRequest) {
       settings = await prisma.partnersSettings.update({
         where: { id: existingSettings.id },
         data: {
-          title: title || "Mūsu Partneri",
-          subtitle: subtitle || "Mūsu foršie draugi, atbalstītāji un sadarbības partneri",
-          ctaTitle: ctaTitle || "Vēlies kļūt par mūsu partneri?",
-          ctaSubtitle: ctaSubtitle || "Sazinies ar mums un kopā veidosim nākotni!",
-          ctaButtonText: ctaButtonText || "Sazināties ar mums",
-          ctaButtonLink: ctaButtonLink || "/contact",
-          isActive: isActive !== undefined ? isActive : true
+          title: title !== undefined ? title : null,
+          subtitle: subtitle !== undefined ? subtitle : null,
+          ctaTitle: ctaTitle !== undefined ? ctaTitle : null,
+          ctaSubtitle: ctaSubtitle !== undefined ? ctaSubtitle : null,
+          ctaButtonText: ctaButtonText !== undefined ? ctaButtonText : null,
+          ctaButtonLink: ctaButtonLink !== undefined ? ctaButtonLink : null,
+          isActive: isActive !== undefined ? isActive : existingSettings.isActive
         }
       });
     } else {
       // Izveidojam jaunus
       settings = await prisma.partnersSettings.create({
         data: {
-          title: title || "Mūsu Partneri",
-          subtitle: subtitle || "Mūsu foršie draugi, atbalstītāji un sadarbības partneri",
-          ctaTitle: ctaTitle || "Vēlies kļūt par mūsu partneri?",
-          ctaSubtitle: ctaSubtitle || "Sazinies ar mums un kopā veidosim nākotni!",
-          ctaButtonText: ctaButtonText || "Sazināties ar mums",
-          ctaButtonLink: ctaButtonLink || "/contact",
-          isActive: isActive !== undefined ? isActive : true
+          title: title !== undefined ? title : null,
+          subtitle: subtitle !== undefined ? subtitle : null,
+          ctaTitle: ctaTitle !== undefined ? ctaTitle : null,
+          ctaSubtitle: ctaSubtitle !== undefined ? ctaSubtitle : null,
+          ctaButtonText: ctaButtonText !== undefined ? ctaButtonText : null,
+          ctaButtonLink: ctaButtonLink !== undefined ? ctaButtonLink : null,
+          isActive: isActive !== undefined ? isActive : false
         }
       });
     }
