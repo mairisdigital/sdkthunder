@@ -153,14 +153,6 @@ const PartnersPage: React.FC = () => {
     order: 0
   };
 
-  const getTierIcon = (tier: string) => {
-    const tierData = partnerTiers.find(t => t.value === tier);
-    if (!tierData) return <Shield className="w-4 h-4" />;
-    const Icon = tierData.icon;
-    return <Icon className="w-4 h-4" />;
-  };
-
-
   const handleAddPartner = () => {
     const newId = Date.now(); // Temporary ID
     const newPartner: Partner = {
@@ -665,7 +657,7 @@ const PartnersPage: React.FC = () => {
               {/* Virsraksta akcenta krāsa */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Virsraksta "partneri" teksta krāsa
+                  Virsraksta &quot;partneri&quot; teksta krāsa
                 </label>
                 <div className="flex items-center gap-3">
                   <input
