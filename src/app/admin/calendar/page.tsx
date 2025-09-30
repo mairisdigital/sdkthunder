@@ -23,6 +23,7 @@ interface CalendarEvent {
   title: string;
   description?: string;
   date: string;
+  endDate?: string;
   location?: string;
 }
 
@@ -277,6 +278,56 @@ export default function AdminCalendar() {
                   </div>
                 </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                      <CalendarIcon className="w-4 h-4 mr-1 text-red-500" />
+                      Beigu datums
+                    </label>
+                    <input
+                      type="date"
+                      value={editing.endDate ? formatDateForInput(editing.endDate) : ''}
+                      onChange={e => {
+                        if (e.target.value) {
+                          const endTime = editing.endDate ? formatTimeForInput(editing.endDate) : '23:59';
+                          const dateTime = new Date(`${e.target.value}T${endTime}`);
+                          setEditing({ ...editing, endDate: dateTime.toISOString() });
+                        } else {
+                          setEditing({ ...editing, endDate: undefined });
+                        }
+                      }}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all duration-300"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                      <Clock className="w-4 h-4 mr-1 text-red-500" />
+                      Beigu laiks
+                    </label>
+                    <select
+                      value={editing.endDate ? formatTimeForInput(editing.endDate) : '23:59'}
+                      onChange={e => {
+                        if (editing.endDate) {
+                          const dateTime = new Date(`${formatDateForInput(editing.endDate)}T${e.target.value}`);
+                          setEditing({ ...editing, endDate: dateTime.toISOString() });
+                        } else {
+                          const dateTime = new Date(`${formatDateForInput(editing.date)}T${e.target.value}`);
+                          setEditing({ ...editing, endDate: dateTime.toISOString() });
+                        }
+                      }}
+                      disabled={!editing.endDate}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all duration-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    >
+                      {timeOptions.map(option => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
                 <div>
                   <label className="text-sm font-medium text-gray-700 mb-2 flex items-center">
                     <MapPin className="w-4 h-4 mr-1 text-red-500" />
@@ -366,8 +417,13 @@ export default function AdminCalendar() {
                         <div className="flex items-center">
                           <CalendarIcon className="w-4 h-4 mr-2 text-red-500" />
                           {formatDateForDisplay(event.date)}
+                          {event.endDate && (
+                            <span className="ml-2">
+                              - {formatDateForDisplay(event.endDate)}
+                            </span>
+                          )}
                         </div>
-                        
+
                         {event.location && (
                           <div className="flex items-center">
                             <MapPin className="w-4 h-4 mr-2 text-red-500" />

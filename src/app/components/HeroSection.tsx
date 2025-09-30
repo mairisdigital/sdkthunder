@@ -193,7 +193,7 @@ const HeroSection: React.FC = () => {
         
         {/* Title Section */}
         <div className="text-center mb-8">
-          <h1 className="text-6xl md:text-8xl font-bold mb-4 drop-shadow-2xl">
+          <h1 className="text-6xl md:text-6xl font-bold mb-4 drop-shadow-2xl" style={{ fontFamily: 'Ethnocentric' }}>
             <span className="bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
               {settings.title}
             </span>

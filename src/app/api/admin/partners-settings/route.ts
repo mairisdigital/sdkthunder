@@ -14,10 +14,12 @@ export async function GET() {
         data: {
           title: undefined,
           subtitle: undefined,
+          titleAccentColor: undefined,
           ctaTitle: undefined,
           ctaSubtitle: undefined,
           ctaButtonText: undefined,
           ctaButtonLink: undefined,
+          ctaBgColor: undefined,
           isActive: false
         }
       });
@@ -40,10 +42,12 @@ export async function POST(request: NextRequest) {
     const {
       title,
       subtitle,
+      titleAccentColor,
       ctaTitle,
       ctaSubtitle,
       ctaButtonText,
       ctaButtonLink,
+      ctaBgColor,
       isActive
     } = body;
 
@@ -62,10 +66,12 @@ export async function POST(request: NextRequest) {
         data: {
           title: title !== undefined ? title : undefined,
           subtitle: subtitle !== undefined ? subtitle : undefined,
+          titleAccentColor: titleAccentColor !== undefined ? titleAccentColor : existingSettings.titleAccentColor,
           ctaTitle: ctaTitle !== undefined ? ctaTitle : undefined,
           ctaSubtitle: ctaSubtitle !== undefined ? ctaSubtitle : undefined,
           ctaButtonText: ctaButtonText !== undefined ? ctaButtonText : undefined,
           ctaButtonLink: ctaButtonLink !== undefined ? ctaButtonLink : undefined,
+          ctaBgColor: ctaBgColor !== undefined ? ctaBgColor : existingSettings.ctaBgColor,
           isActive: isActive !== undefined ? isActive : existingSettings.isActive
         }
       });
@@ -75,10 +81,12 @@ export async function POST(request: NextRequest) {
         data: {
           title: title !== undefined ? title : undefined,
           subtitle: subtitle !== undefined ? subtitle : undefined,
+          titleAccentColor: titleAccentColor !== undefined ? titleAccentColor : '#dc2626',
           ctaTitle: ctaTitle !== undefined ? ctaTitle : undefined,
           ctaSubtitle: ctaSubtitle !== undefined ? ctaSubtitle : undefined,
           ctaButtonText: ctaButtonText !== undefined ? ctaButtonText : undefined,
           ctaButtonLink: ctaButtonLink !== undefined ? ctaButtonLink : undefined,
+          ctaBgColor: ctaBgColor !== undefined ? ctaBgColor : '#dc2626',
           isActive: isActive !== undefined ? isActive : false
         }
       });

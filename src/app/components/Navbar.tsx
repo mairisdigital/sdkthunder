@@ -108,8 +108,8 @@ const Navbar: React.FC = () => {
           {/* Logo */}
           <div className="flex-shrink-0">
             <div className="flex items-center">
-              <div className="w-22 h-22 flex items-center justify-center shadow-lg overflow-hidden">
-                {data.settings.logoImage ? (
+              {data.settings.logoImage ? (
+                <div className="w-16 h-16 flex items-center justify-center overflow-hidden">
                   <Image
                     src={data.settings.logoImage}
                     alt="Logo"
@@ -117,13 +117,13 @@ const Navbar: React.FC = () => {
                     height={64}
                     className="object-contain w-full h-full"
                   />
-                ) : (
-                  <div className="text-white font-bold text-xs text-center leading-tight">
-                    <div>{data.settings.logoText}</div>
-                    <div className="text-[10px]">{data.settings.logoSubtext}</div>
-                  </div>
-                )}
-              </div>
+                </div>
+              ) : (
+                <div className="text-red-600 font-bold text-lg text-center leading-tight">
+                  <div>{data.settings.logoText}</div>
+                  <div className="text-sm">{data.settings.logoSubtext}</div>
+                </div>
+              )}
             </div>
           </div>
 

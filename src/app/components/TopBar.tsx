@@ -111,7 +111,7 @@ const TopBar: React.FC = () => {
     <div className="bg-slate-900 text-white py-3 relative overflow-hidden">
       {/* Dekoratīvs fons ar gradienta efektu */}
       <div className="absolute inset-0 bg-gradient-to-r from-red-900/20 via-transparent to-red-900/20"></div>
-      
+
       <div className="container mx-auto px-4 relative">
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center space-y-2 lg:space-y-0">
           

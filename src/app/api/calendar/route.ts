@@ -17,6 +17,7 @@ export async function POST(req: Request) {
       description: data.description,
       location: data.location,
       date: new Date(data.date),
+      endDate: data.endDate ? new Date(data.endDate) : null,
     },
   });
 

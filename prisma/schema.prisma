@@ -149,6 +149,7 @@ model CalendarEvent {
   title       String
   description String?
   date        DateTime
+  endDate     DateTime?
   location    String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -236,10 +237,12 @@ model PartnersSettings {
   id          Int      @id @default(autoincrement())
   title       String   @default("Mūsu Partneri")
   subtitle    String   @default("Mūsu foršie draugi, atbalstītāji un sadarbības partneri")
+  titleAccentColor String @default("#dc2626")
   ctaTitle    String   @default("Vēlies kļūt par mūsu partneri?")
   ctaSubtitle String   @default("Sazinies ar mums un kopā veidosim nākotni!")
   ctaButtonText String @default("Sazināties ar mums")
   ctaButtonLink String @default("/contact")
+  ctaBgColor  String   @default("#dc2626")
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

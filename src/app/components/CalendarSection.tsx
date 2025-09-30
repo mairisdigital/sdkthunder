@@ -16,6 +16,7 @@ import {
 interface Event {
   id: number;
   date: string;
+  endDate?: string;
   title: string;
   time: string;
   location: string;
@@ -39,7 +40,7 @@ const CalendarSection: React.FC = () => {
       const res = await fetch('/api/calendar');
       const data = await res.json();
 
-      const enriched = data.map((event: { id: number; title: string; description?: string; date: string; location?: string }): Event => {
+      const enriched = data.map((event: { id: number; title: string; description?: string; date: string; endDate?: string; location?: string }): Event => {
         const dateObj = new Date(event.date);
         const now = new Date();
 
@@ -47,6 +48,17 @@ const CalendarSection: React.FC = () => {
           hour: '2-digit',
           minute: '2-digit'
         });
+
+        // Add endDate to time display if exists
+        let timeDisplay = time;
+        if (event.endDate) {
+          const endDateObj = new Date(event.endDate);
+          const endTime = endDateObj.toLocaleTimeString('lv-LV', {
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+          timeDisplay = `${time} - ${endTime}`;
+        }
 
         let type: Event['type'] = 'event';
         if (/treniņ/i.test(event.title)) type = 'training';
@@ -62,7 +74,8 @@ const CalendarSection: React.FC = () => {
           title: event.title,
           description: event.description || '',
           date: event.date,
-          time,
+          endDate: event.endDate,
+          time: timeDisplay,
           location: event.location || '',
           type,
           opponent: undefined,
@@ -162,10 +175,10 @@ const CalendarSection: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'upcoming': return 'text-blue-600';
-      case 'completed': return 'text-green-600';
-      case 'live': return 'text-red-600';
-      default: return 'text-gray-600';
+      case 'upcoming': return 'bg-blue-100 text-blue-600';
+      case 'completed': return 'bg-red-100 text-red-600';
+      case 'live': return 'bg-green-100 text-green-600';
+      default: return 'bg-gray-100 text-gray-600';
     }
   };
 
@@ -333,8 +346,8 @@ const CalendarSection: React.FC = () => {
                         <div className={`w-3 h-3 rounded-full ${getEventTypeColor(event.type)}`}></div>
                         <h4 className="text-xl font-bold text-slate-800">{event.title}</h4>
                         <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(event.status)}`}>
-                          {event.status === 'upcoming' ? 'Gaidāms' : 
-                           event.status === 'completed' ? 'Pabeigts' : 'Tiešraide'}
+                          {event.status === 'upcoming' ? 'Gaidāms' :
+                           event.status === 'completed' ? 'Beidzies' : 'Aktīvs'}
                         </span>
                       </div>
                       
@@ -350,11 +363,29 @@ const CalendarSection: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div className="space-y-3 mb-4">
                     <div className="flex items-center text-gray-600">
                       <Clock className="w-5 h-5 mr-2 text-red-500" />
                       <span>{event.time}</span>
                     </div>
+                    {event.endDate && (
+                      <div className="flex items-center text-gray-600">
+                        <CalendarIcon className="w-5 h-5 mr-2 text-red-500" />
+                        <span>
+                          {new Date(event.date).toLocaleDateString('lv-LV', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                          {' - '}
+                          {new Date(event.endDate).toLocaleDateString('lv-LV', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                        </span>
+                      </div>
+                    )}
                     <div className="flex items-center text-gray-600">
                       <MapPin className="w-5 h-5 mr-2 text-red-500" />
                       <span>{event.location}</span>

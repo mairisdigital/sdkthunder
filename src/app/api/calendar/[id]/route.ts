@@ -19,6 +19,7 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
         description: data.description,
         location: data.location,
         date: new Date(data.date),
+        endDate: data.endDate ? new Date(data.endDate) : null,
       },
     });
 

@@ -19,10 +19,12 @@ interface PartnersSettings {
   id: number;
   title: string;
   subtitle: string;
+  titleAccentColor: string;
   ctaTitle: string;
   ctaSubtitle: string;
   ctaButtonText: string;
   ctaButtonLink: string;
+  ctaBgColor: string;
   isActive: boolean;
 }
 
@@ -32,10 +34,12 @@ const PartnersSection: React.FC = () => {
     id: 0,
     title: "Mūsu Partneri",
     subtitle: "Mūsu foršie draugi, atbalstītāji un sadarbības partneri",
+    titleAccentColor: "#dc2626",
     ctaTitle: "Vēlies kļūt par mūsu partneri?",
     ctaSubtitle: "Sazinies ar mums un kopā veidosim nākotni!",
     ctaButtonText: "Sazināties ar mums",
     ctaButtonLink: "/contact",
+    ctaBgColor: "#dc2626",
     isActive: true
   });
   const [loading, setLoading] = useState(true);
@@ -157,12 +161,12 @@ const PartnersSection: React.FC = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-16">
           <div className="flex items-center justify-center mb-6">
-            <Handshake className="w-12 h-12 text-red-600 mr-4" />
+            <Handshake className="w-12 h-12 mr-4" style={{ color: settings.titleAccentColor }} />
             <h2 className="text-4xl md:text-5xl font-bold">
               <span className="text-slate-800">{settings.title.split(' ').slice(0, -1).join(' ')} </span>
-              <span className="text-red-600 relative">
+              <span className="relative" style={{ color: settings.titleAccentColor }}>
                 {settings.title.split(' ').slice(-1)[0]}
-                <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-red-500 to-orange-500 rounded-full" />
+                <div className="absolute -bottom-2 left-0 right-0 h-1 rounded-full" style={{ background: settings.titleAccentColor }} />
               </span>
             </h2>
           </div>
@@ -173,16 +177,11 @@ const PartnersSection: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {partners.map((partner) => (
-            <div 
+            <div
               key={partner.id}
               className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-red-200 hover:scale-105"
             >
               <div className="relative">
-                <div className={`absolute top-4 right-4 z-10 bg-gradient-to-r ${getTierGradient(partner.tier)} text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg`}>
-                  {getTierIcon(partner.tier)}
-                  {partner.tier.toUpperCase()}
-                </div>
-                
                 <div className="h-32 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4 group-hover:from-red-50 group-hover:to-orange-50 transition-all duration-500 relative">
                   {/* Logo attēls */}
                   {partner.logo ? (
@@ -239,7 +238,7 @@ const PartnersSection: React.FC = () => {
 
         {/* CTA sadaļa */}
         {settings.isActive && (
-          <div className="bg-gradient-to-r from-red-600 to-red-700 rounded-3xl p-12 text-center text-white relative overflow-hidden">
+          <div className="rounded-3xl p-12 text-center text-white relative overflow-hidden" style={{ background: settings.ctaBgColor }}>
             <div className="absolute inset-0 opacity-10">
               <div
                 style={{
