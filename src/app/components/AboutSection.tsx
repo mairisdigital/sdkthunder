@@ -84,7 +84,9 @@ const AboutSection: React.FC = () => {
     ctaText: "Pievienojies mūsu komandai!",
     ctaSubtext: "Ja tev ir kaislība basketbolam un vēlies atbalstīt Latvijas sportistus, mēs vienmēr esam atvērti jauniem biedriem.",
     contactButtonText: "Sazināties ar mums",
-    learnMoreButtonText: "Uzzināt vairāk"
+    contactButtonLink: undefined,
+    learnMoreButtonText: "Uzzināt vairāk",
+    learnMoreButtonLink: undefined
   };
 
   const defaultValues = [
