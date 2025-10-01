@@ -27,6 +27,7 @@ model NavbarSettings {
   logoText    String   @default("SDK")
   logoSubtext String   @default("THUNDER")
   logoImage   String?  // URL uz logo attēlu
+  faviconUrl  String?  // URL uz favicon attēlu
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -200,7 +201,9 @@ model AboutContent {
   ctaText String?
   ctaSubtext String @db.Text
   contactButtonText String @default("Sazināties ar mums")
+  contactButtonLink String?
   learnMoreButtonText String @default("Uzzināt vairāk")
+  learnMoreButtonLink String?
   isActive Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

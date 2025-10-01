@@ -21,6 +21,7 @@ interface NavbarSettings {
   logoText: string;
   logoSubtext: string;
   logoImage: string | null;
+  faviconUrl: string | null;
 }
 
 interface MenuItem {
@@ -42,7 +43,8 @@ export default function AdminNavbar() {
     settings: {
       logoText: 'SDK',
       logoSubtext: 'THUNDER',
-      logoImage: null
+      logoImage: null,
+      faviconUrl: null
     },
     menuItems: [
       { name: 'SĀKUMS', href: '/', order: 1, active: true, visible: true },
@@ -61,8 +63,11 @@ export default function AdminNavbar() {
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploadingFavicon, setIsUploadingFavicon] = useState(false);
+  const [faviconUploadProgress, setFaviconUploadProgress] = useState(0);
 
   const logoFileInputRef = useRef<HTMLInputElement>(null);
+  const faviconFileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchNavbarData();
@@ -210,6 +215,77 @@ export default function AdminNavbar() {
     }
   };
 
+  const handleFaviconChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.includes('image/')) {
+      alert('Lūdzu, izvēlieties attēla failu.');
+      return;
+    }
+
+    setIsUploadingFavicon(true);
+    setFaviconUploadProgress(0);
+
+    try {
+      const progressInterval = setInterval(() => {
+        setFaviconUploadProgress(prev => Math.min(prev + 10, 90));
+      }, 300);
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('folder', 'sdkthunder/favicon');
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      clearInterval(progressInterval);
+      setFaviconUploadProgress(100);
+
+      if (!response.ok) {
+        throw new Error('Failed to upload');
+      }
+
+      const result = await response.json();
+
+      setData(prev => ({
+        ...prev,
+        settings: {
+          ...prev.settings,
+          faviconUrl: result.url
+        }
+      }));
+
+      if (faviconFileInputRef.current) {
+        faviconFileInputRef.current.value = '';
+      }
+
+    } catch (error) {
+      console.error('Error uploading favicon:', error);
+      alert('Kļūda augšupielādējot favicon. Lūdzu, mēģiniet vēlreiz.');
+    } finally {
+      setTimeout(() => {
+        setIsUploadingFavicon(false);
+        setFaviconUploadProgress(0);
+      }, 500);
+    }
+  };
+
+  const handleRemoveFavicon = () => {
+    setData(prev => ({
+      ...prev,
+      settings: {
+        ...prev.settings,
+        faviconUrl: null
+      }
+    }));
+    if (faviconFileInputRef.current) {
+      faviconFileInputRef.current.value = '';
+    }
+  };
+
   const handleSave = async () => {
     setIsSaving(true);
     
@@ -223,6 +299,7 @@ export default function AdminNavbar() {
           logoText: data.settings.logoText,
           logoSubtext: data.settings.logoSubtext,
           logoImage: data.settings.logoImage,
+          faviconUrl: data.settings.faviconUrl,
           menuItems: data.menuItems,
         }),
       });
@@ -374,6 +451,72 @@ export default function AdminNavbar() {
                     <p className="text-xs text-gray-500 mt-1">
                       Ieteicamais izmērs: 200x80px, PNG ar caurspīdīgu fonu. Ja nav attēla, tiks rādīts teksts.
                     </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Favicon */}
+              <div className="border-t pt-4">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Favicon</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Favicon attēls
+                    </label>
+
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <div className="flex-shrink-0 w-16 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 overflow-hidden relative">
+                        {data.settings.faviconUrl ? (
+                          <div className="relative w-full h-full">
+                            <NextImage
+                              src={data.settings.faviconUrl}
+                              alt="Favicon"
+                              fill
+                              className="object-contain"
+                            />
+                          </div>
+                        ) : (
+                          <div className="text-gray-400 text-sm text-center p-2">
+                            <Image className="w-6 h-6 mx-auto mb-1 opacity-50" />
+                          </div>
+                        )}
+
+                        {isUploadingFavicon && (
+                          <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-white">
+                            <Loader2 className="w-4 h-4 animate-spin mb-1" />
+                            <span className="text-xs">{faviconUploadProgress}%</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex flex-col gap-2">
+                        <label className="flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-all duration-300 cursor-pointer">
+                          <Upload className="w-4 h-4 mr-2" />
+                          Augšupielādēt favicon
+                          <input
+                            ref={faviconFileInputRef}
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFaviconChange}
+                            className="hidden"
+                          />
+                        </label>
+
+                        {data.settings.faviconUrl && (
+                          <button
+                            onClick={handleRemoveFavicon}
+                            className="flex items-center px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg font-medium transition-all duration-300"
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Noņemt favicon
+                          </button>
+                        )}
+
+                        <p className="text-xs text-gray-500 mt-1">
+                          Ieteicamais izmērs: 32x32px vai 64x64px, PNG/ICO formātā.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

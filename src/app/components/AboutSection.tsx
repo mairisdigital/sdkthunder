@@ -28,7 +28,9 @@ interface AboutContent {
   ctaText?: string;
   ctaSubtext: string;
   contactButtonText: string;
+  contactButtonLink?: string;
   learnMoreButtonText: string;
+  learnMoreButtonLink?: string;
   isActive: boolean;
 }
 
@@ -288,12 +290,30 @@ const AboutSection: React.FC = () => {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 shadow-lg">
-                  {displayContent.contactButtonText}
-                </button>
-                <button className="border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105">
-                  {displayContent.learnMoreButtonText}
-                </button>
+                {displayContent.contactButtonLink ? (
+                  <a
+                    href={displayContent.contactButtonLink}
+                    className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 shadow-lg text-center"
+                  >
+                    {displayContent.contactButtonText}
+                  </a>
+                ) : (
+                  <button className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 shadow-lg">
+                    {displayContent.contactButtonText}
+                  </button>
+                )}
+                {displayContent.learnMoreButtonLink ? (
+                  <a
+                    href={displayContent.learnMoreButtonLink}
+                    className="border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 text-center"
+                  >
+                    {displayContent.learnMoreButtonText}
+                  </a>
+                ) : (
+                  <button className="border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105">
+                    {displayContent.learnMoreButtonText}
+                  </button>
+                )}
               </div>
             </div>
           </div>

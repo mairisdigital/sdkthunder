@@ -35,7 +35,9 @@ interface AboutContent {
   ctaText?: string;
   ctaSubtext: string;
   contactButtonText: string;
+  contactButtonLink?: string;
   learnMoreButtonText: string;
+  learnMoreButtonLink?: string;
   isActive: boolean;
 }
 
@@ -497,12 +499,32 @@ export default function AdminAbout() {
                     />
                   </div>
                   <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Kontaktu pogas saite</label>
+                    <input
+                      type="text"
+                      value={content.contactButtonLink || ''}
+                      onChange={(e) => setContent({ ...content, contactButtonLink: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                      placeholder="/contact"
+                    />
+                  </div>
+                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">&quot;Uzzināt vairāk&quot; pogas teksts</label>
                     <input
                       type="text"
                       value={content.learnMoreButtonText}
                       onChange={(e) => setContent({ ...content, learnMoreButtonText: e.target.value })}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">&quot;Uzzināt vairāk&quot; pogas saite</label>
+                    <input
+                      type="text"
+                      value={content.learnMoreButtonLink || ''}
+                      onChange={(e) => setContent({ ...content, learnMoreButtonLink: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                      placeholder="/about"
                     />
                   </div>
                 </div>

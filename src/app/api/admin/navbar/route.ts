@@ -68,7 +68,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { logoText, logoSubtext, logoImage, menuItems } = body;
+    const { logoText, logoSubtext, logoImage, faviconUrl, menuItems } = body;
 
     // Bez validācijas - ļaujam tukšus laukus
 
@@ -85,6 +85,7 @@ export async function POST(request: NextRequest) {
           logoText: logoText !== undefined ? logoText : undefined,
           logoSubtext: logoSubtext !== undefined ? logoSubtext : undefined,
           logoImage: logoImage !== undefined ? logoImage : existingSettings.logoImage,
+          faviconUrl: faviconUrl !== undefined ? faviconUrl : existingSettings.faviconUrl,
         }
       });
     } else {
@@ -93,6 +94,7 @@ export async function POST(request: NextRequest) {
           logoText: logoText !== undefined ? logoText : undefined,
           logoSubtext: logoSubtext !== undefined ? logoSubtext : undefined,
           logoImage,
+          faviconUrl,
         }
       });
     }
