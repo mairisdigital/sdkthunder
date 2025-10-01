@@ -256,7 +256,7 @@ const PartnersSection: React.FC = () => {
                 {settings.ctaSubtitle}
               </p>
               <a
-                href={settings.ctaButtonLink}
+                href={settings.ctaButtonLink} target="_blank" rel="noopener noreferrer"
                 className="inline-block bg-white text-red-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
               >
                 {settings.ctaButtonText}

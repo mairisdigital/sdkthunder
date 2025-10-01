@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { 
-  Calendar, 
-  User, 
-  Eye, 
-  MessageCircle, 
-  Tag, 
+  Calendar,
+  User,
+  Eye,
+  MessageCircle,
+  Tag,
   Clock,
   ArrowLeft,
   Heart,
@@ -14,7 +14,9 @@ import {
   ThumbsUp,
   Send,
   ArrowRight,
-  Loader2
+  Loader2,
+  X,
+  ZoomIn
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -58,6 +60,7 @@ const SingleNewsSection: React.FC<{ newsId: string }> = ({ newsId }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [newComment, setNewComment] = useState('');
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   // Fetch article data
   useEffect(() => {
@@ -256,6 +259,31 @@ const SingleNewsSection: React.FC<{ newsId: string }> = ({ newsId }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-slate-100">
+      {/* Image Lightbox Modal */}
+      {lightboxImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
+          onClick={() => setLightboxImage(null)}
+        >
+          <button
+            onClick={() => setLightboxImage(null)}
+            className="absolute top-4 right-4 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
+            title="Aizvērt"
+          >
+            <X className="w-6 h-6 text-white" />
+          </button>
+          <div className="relative max-w-7xl max-h-[90vh] w-full h-full">
+            <Image
+              src={lightboxImage}
+              alt="Full size image"
+              fill
+              className="object-contain"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
+
       <div className="pt-8 pb-20">
         <div className="container mx-auto px-4">
           
@@ -274,7 +302,7 @@ const SingleNewsSection: React.FC<{ newsId: string }> = ({ newsId }) => {
             <article className="lg:col-span-2">
               <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl overflow-hidden border border-white/20">
                 
-                <div className="relative h-96 overflow-hidden">
+                <div className="relative h-96 overflow-hidden group/image">
                   <Image
                     src={article.image || '/placeholder.jpg'}
                     alt={article.title}
@@ -282,7 +310,15 @@ const SingleNewsSection: React.FC<{ newsId: string }> = ({ newsId }) => {
                     className="object-cover"
                     sizes="(max-width: 1024px) 100vw, 66vw"
                   />
-                  
+
+                  <button
+                    onClick={() => setLightboxImage(article.image)}
+                    className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover/image:opacity-100 transition-all duration-300 hover:bg-white"
+                    title="Skatīt pilnu attēlu"
+                  >
+                    <ZoomIn className="w-5 h-5 text-gray-600" />
+                  </button>
+
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                   
                   <div className="absolute bottom-6 left-6 right-6">
@@ -322,17 +358,6 @@ const SingleNewsSection: React.FC<{ newsId: string }> = ({ newsId }) => {
                     </div>
 
                     <div className="flex items-center gap-3">
-                      <button
-                        onClick={handleLike}
-                        className={`flex items-center px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
-                          isLiked 
-                            ? 'bg-red-100 text-red-600 border border-red-200' 
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                        }`}
-                      >
-                        <Heart className={`w-4 h-4 mr-1 ${isLiked ? 'fill-current' : ''}`} />
-                        {article.likes.toLocaleString()}
-                      </button>
                       <button className="flex items-center px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors duration-300">
                         <Share2 className="w-4 h-4 mr-1" />
                         Dalīties
@@ -366,62 +391,6 @@ const SingleNewsSection: React.FC<{ newsId: string }> = ({ newsId }) => {
                       </div>
                     </div>
                   )}
-                </div>
-              </div>
-
-              {/* Comments Section */}
-              <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 mt-8 border border-white/20">
-                <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center">
-                  <MessageCircle className="w-6 h-6 mr-3 text-red-600" />
-                  Komentāri ({comments.length})
-                </h3>
-
-                <form onSubmit={handleCommentSubmit} className="mb-8">
-                  <div className="mb-4">
-                    <textarea
-                      value={newComment}
-                      onChange={(e) => setNewComment(e.target.value)}
-                      placeholder="Pievienot komentāru..."
-                      rows={3}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none resize-none bg-white/80 backdrop-blur-sm"
-                      disabled={isSubmittingComment}
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={!newComment.trim() || isSubmittingComment}
-                    className="bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-300 flex items-center"
-                  >
-                    {isSubmittingComment ? (
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    ) : (
-                      <Send className="w-4 h-4 mr-2" />
-                    )}
-                    Pievienot komentāru
-                  </button>
-                </form>
-
-                <div className="space-y-6">
-                  {comments.map((comment) => (
-                    <div key={comment.id} className="bg-gray-50/80 backdrop-blur-sm rounded-xl p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center text-white font-bold text-sm mr-3">
-                            {comment.author.charAt(0)}
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-slate-800">{comment.author}</h4>
-                            <p className="text-sm text-gray-500">{formatDate(comment.date)}</p>
-                          </div>
-                        </div>
-                        <button className="flex items-center text-gray-500 hover:text-red-600 transition-colors duration-300">
-                          <ThumbsUp className="w-4 h-4 mr-1" />
-                          {comment.likes}
-                        </button>
-                      </div>
-                      <p className="text-gray-700 ml-11">{comment.content}</p>
-                    </div>
-                  ))}
                 </div>
               </div>
             </article>

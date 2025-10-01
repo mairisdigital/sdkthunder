@@ -2,18 +2,20 @@
 
 import React, { useState, useEffect } from 'react';
 import { 
-  Calendar, 
-  User, 
-  Eye, 
-  MessageCircle, 
-  Tag, 
+  Calendar,
+  User,
+  Eye,
+  MessageCircle,
+  Tag,
   Search,
   TrendingUp,
   Clock,
   ArrowRight,
   Heart,
   Share2,
-  BookOpen} from 'lucide-react';
+  BookOpen,
+  X,
+  ZoomIn} from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -49,6 +51,7 @@ const NewsPageSection: React.FC = () => {
   const [categories, setCategories] = useState([
     { id: 'all', name: 'Visi jaunumi', count: 0 }
   ]);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   // Fetch news data from API
   useEffect(() => {
@@ -218,6 +221,31 @@ const NewsPageSection: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-slate-100">
+      {/* Image Lightbox Modal */}
+      {lightboxImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
+          onClick={() => setLightboxImage(null)}
+        >
+          <button
+            onClick={() => setLightboxImage(null)}
+            className="absolute top-4 right-4 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
+            title="Aizvērt"
+          >
+            <X className="w-6 h-6 text-white" />
+          </button>
+          <div className="relative max-w-7xl max-h-[90vh] w-full h-full">
+            <Image
+              src={lightboxImage}
+              alt="Full size image"
+              fill
+              className="object-contain"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
+
       <div className="pt-8 pb-20">
         <div className="container mx-auto px-4">
           
@@ -300,15 +328,19 @@ const NewsPageSection: React.FC = () => {
                               Trending
                             </div>
                           )}
-                          
+
                           <div className="absolute top-4 right-4 z-10 flex gap-2">
-                            <button 
-                              onClick={(e) => e.preventDefault()}
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setLightboxImage(article.image);
+                              }}
                               className="w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white"
+                              title="Skatīt pilnu attēlu"
                             >
-                              <Heart className="w-4 h-4 text-gray-600" />
+                              <ZoomIn className="w-4 h-4 text-gray-600" />
                             </button>
-                            <button 
+                            <button
                               onClick={(e) => e.preventDefault()}
                               className="w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white"
                             >
@@ -357,14 +389,6 @@ const NewsPageSection: React.FC = () => {
                                 <Eye className="w-4 h-4 mr-1" />
                                 {article.views > 1000 ? `${Math.floor(article.views / 1000)}k` : article.views}
                               </span>
-                              <span className="flex items-center">
-                                <MessageCircle className="w-4 h-4 mr-1" />
-                                {article.comments}
-                              </span>
-                              <span className="flex items-center">
-                                <Heart className="w-4 h-4 mr-1" />
-                                {article.likes}
-                              </span>
                             </div>
                           </div>
 
@@ -406,6 +430,16 @@ const NewsPageSection: React.FC = () => {
                               Hot
                             </div>
                           )}
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setLightboxImage(article.image);
+                            }}
+                            className="absolute top-3 right-3 z-10 w-7 h-7 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white"
+                            title="Skatīt pilnu attēlu"
+                          >
+                            <ZoomIn className="w-3 h-3 text-gray-600" />
+                          </button>
                         <Image
                             src={article.image || '/placeholder.jpg'}
                             alt={article.title}
@@ -438,14 +472,6 @@ const NewsPageSection: React.FC = () => {
                               <span className="flex items-center">
                                 <Eye className="w-3 h-3 mr-1" />
                                 {article.views > 1000 ? `${Math.floor(article.views / 1000)}k` : article.views}
-                              </span>
-                              <span className="flex items-center">
-                                <MessageCircle className="w-3 h-3 mr-1" />
-                                {article.comments}
-                              </span>
-                              <span className="flex items-center">
-                                <Heart className="w-3 h-3 mr-1" />
-                                {article.likes}
                               </span>
                             </div>
                           </div>

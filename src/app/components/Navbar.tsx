@@ -133,6 +133,8 @@ const Navbar: React.FC = () => {
               <a
                 key={item.id}
                 href={item.href}
+                target={item.name === 'KONTAKTI' ? '_blank' : undefined}
+                rel={item.name === 'KONTAKTI' ? 'noopener noreferrer' : undefined}
                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 hover:scale-105 ${
                   isPageActive(item.href)
                     ? 'bg-red-600 text-white shadow-lg'
@@ -163,6 +165,8 @@ const Navbar: React.FC = () => {
                 <a
                   key={item.id}
                   href={item.href}
+                  target={item.name === 'KONTAKTI' ? '_blank' : undefined}
+                  rel={item.name === 'KONTAKTI' ? 'noopener noreferrer' : undefined}
                   className={`block px-4 py-3 rounded-lg text-base font-medium transition-colors duration-300 ${
                     isPageActive(item.href)
                       ? 'bg-red-600 text-white'

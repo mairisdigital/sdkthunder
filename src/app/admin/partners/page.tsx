@@ -657,7 +657,7 @@ const PartnersPage: React.FC = () => {
               {/* Virsraksta akcenta krāsa */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Virsraksta &quot;partneri&quot; teksta krāsa
+                  Virsraksta partneri teksta krāsa
                 </label>
                 <div className="flex items-center gap-3">
                   <input
